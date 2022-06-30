@@ -8,56 +8,62 @@
 import SwiftUI
 
 struct ProfileView: View {
+    var weekHourLimits = ""
+    
     var body: some View {
         GeometryReader{g in
-            staffCardView(staffName: "Angus")
-                .position(x: g.size.width*0.6, y: g.size.height*0.6)
+            ZStack{
+                staffCardView(staffName: "", bgColor: .black, weekHourLimits: weekHourLimits)
+                    .position(x: g.size.width*0.6, y: g.size.height*0.6)
+                    .offset(x: 40, y: -60)
+                
+                staffCardView(staffName: "", bgColor: .green, weekHourLimits: weekHourLimits)
+                    .position(x: g.size.width*0.6, y: g.size.height*0.6)
+                    .offset(x: 20, y: -30)
+                staffCardView(staffName: "Angus", bgColor: .red, weekHourLimits: weekHourLimits)
+                    .position(x: g.size.width*0.6, y: g.size.height*0.6)
+                
+            }
+//            staffCardView(staffName: "Angus", weekHourLimits: weekHourLimits)
+//                .position(x: g.size.width*0.6, y: g.size.height*0.6)
         }
-        
-        
-//        GeometryReader{geometry in
-//            staffCardView()
-//                .background(.red)
-//            .cornerRadius(10)
-//            .frame(width: geometry.size.width*0.5, height: geometry.size.height/2, alignment: Alignment.center)
-//
-//        }
-        
-//        VStack(alignment: .leading, spacing: 1.0){
-//            LabelBtnView(label: "Job Titles")
-//                .frame(width: .infinity, alignment: .leading)
-//            let jobs :[String] = ["roll1","roll1","roll1","roll1","roll1",
-//                "roll1","roll1","roll1","roll1","roll1",
-//                                  "roll1","roll1","roll1","roll1","roll1",
-//                                  "roll1","roll1","roll1","roll1","roll1"]
-//            jobView(jobTitles: jobs)
-//                .padding(.bottom)
-//
-//
-//            LabelBtnView(label: "Shifts")
-//                .frame(width: .infinity, height: .infinity, alignment: .leading)
-//            let shifts = [(1,"open", "7am~5pm"),(2,"close", "8am~8pm"),(3,"general", "8am~5pm")]
-//            shiftsView(shifts: shifts)
-//                .padding(.bottom)
-//        }
-//        .frame( maxHeight: .infinity, alignment: Alignment.topLeading)
-//        .padding([.top, .leading], 5)
     }
 }
 
 struct staffCardView: View {
     var staffName: String
-    
+    var bgColor: Color
+    @State var weekHourLimits: String
     var body: some View {
         
         GeometryReader{ geometry in
-            VStack{
-                Text(staffName)
+            VStack(alignment: .leading, spacing: 1) {
+               Text(staffName)
                     .bold()
                     .font(.largeTitle)
+                    .alignmentGuide(.leading) { d in
+                        -geometry.size.width*0.27
+                    }
+                    .padding([.top, .bottom], 20)
+                
+                HStack {
+                    Text("Weekly Hour Limits:")
+                        .font(.body)
+                        //.padding(.bottom, 5)
+                    TextField("Input Numbers Only", text: $weekHourLimits)
+                        .padding(.leading, 5)
+                        .border(.black)
+                        .onChange(of: weekHourLimits) { newValue in
+                            if newValue.range(of: "^[0-9]+$", options: .regularExpression) == nil {
+                                weekHourLimits = ""
+                            }
+                        }
+                }
+                .padding(.bottom, 10)
                 
                 
-                LabelBtnView(label: "Job Titles")
+                
+                LabelBtnView(label: "Skills")
                 let jobs :[String] = ["roll1","roll1","roll1","roll1","roll1",
                     "roll1","roll1","roll1","roll1","roll1",
                                       "roll1","roll1","roll1","roll1","roll1",
@@ -65,8 +71,8 @@ struct staffCardView: View {
                 jobView(jobTitles: jobs)
 //                    .padding(.bottom)
             }
-            .frame(width: geometry.size.width*0.8, height: geometry.size.height*0.8)
-            .background(.red)
+            .frame(maxWidth: geometry.size.width*0.8, maxHeight: geometry.size.height*0.8, alignment: .topLeading)
+            .background(bgColor)
             .cornerRadius(20)
             
         }
