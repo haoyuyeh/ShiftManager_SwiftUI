@@ -63,6 +63,7 @@ struct LabelBtnView: View {
         }.border(.black)
     }
 }
+
 struct jobView: View {
     var jobTitles: [String]
     
