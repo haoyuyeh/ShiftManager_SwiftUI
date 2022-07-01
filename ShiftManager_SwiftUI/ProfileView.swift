@@ -11,18 +11,39 @@ struct ProfileView: View {
     var weekHourLimits = ""
     
     var body: some View {
-        GeometryReader{g in
-            ZStack{
-                staffCardView(staffName: "", bgColor: .black, weekHourLimits: weekHourLimits)
-                    .position(x: g.size.width*0.6, y: g.size.height*0.7)
-                    .offset(x: 40, y: -60)
-                
-                staffCardView(staffName: "", bgColor: .green, weekHourLimits: weekHourLimits)
-                    .position(x: g.size.width*0.6, y: g.size.height*0.7)
-                    .offset(x: 20, y: -30)
-                staffCardView(staffName: "Angus", bgColor: .red, weekHourLimits: weekHourLimits)
-                    .position(x: g.size.width*0.6, y: g.size.height*0.7)
-                
+        
+        VStack{
+            HStack{
+                Spacer()
+                Text("Profile")
+                    .bold()
+                    .font(.largeTitle)
+                Spacer()
+                Button(action: {
+                    
+                }){
+                    Image(systemName: "person.fill.badge.plus")
+                        .resizable()
+                        .frame(width: 30, height: 30)
+                        .aspectRatio(contentMode: .fill)
+                }
+                .padding([.top, .bottom, .trailing], 10)
+            }
+            
+            
+            GeometryReader{g in
+                ZStack{
+                    staffCardView(staffName: "", bgColor: .black, weekHourLimits: weekHourLimits)
+                        .position(x: g.size.width*0.6, y: g.size.height*0.7)
+                        .offset(x: 40, y: -60)
+                    
+                    staffCardView(staffName: "", bgColor: .green, weekHourLimits: weekHourLimits)
+                        .position(x: g.size.width*0.6, y: g.size.height*0.7)
+                        .offset(x: 20, y: -30)
+                    staffCardView(staffName: "Angus", bgColor: .red, weekHourLimits: weekHourLimits)
+                        .position(x: g.size.width*0.6, y: g.size.height*0.7)
+                    
+                }
             }
         }
     }

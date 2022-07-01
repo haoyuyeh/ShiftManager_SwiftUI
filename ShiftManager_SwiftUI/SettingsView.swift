@@ -13,9 +13,19 @@ struct SettingsView: View {
     
     var body: some View {
         
+        
+        
         VStack(alignment: .leading, spacing: 1.0){
+            HStack{
+                Spacer()
+                Text("Settings")
+                    .bold()
+                    .font(.largeTitle)
+                Spacer()
+            }
+            .padding(.bottom, 10)
+            
             LabelBtnView(label: "Job Titles", hasClear: false)
-                .frame(width: .infinity, alignment: .leading)
             let jobs :[String] = ["roll1","roll1","roll1","roll1","roll1",
                 "roll1","roll1","roll1","roll1","roll1",
                                   "roll1","roll1","roll1","roll1","roll1",
@@ -25,7 +35,6 @@ struct SettingsView: View {
             
             
             LabelBtnView(label: "Shifts", hasClear: false)
-                .frame(width: .infinity, height: .infinity, alignment: .leading)
             let shifts = [(1,"open", "7am~5pm"),(2,"close", "8am~8pm"),(3,"general", "8am~5pm")]
             shiftsView(shifts: shifts)
                 .padding(.bottom)
@@ -48,7 +57,8 @@ struct LabelBtnView: View {
     var hasClear: Bool
     
     var body: some View {
-        HStack(){
+        
+        HStack{
             Text(label)
                 .bold()
                 .font(.largeTitle)
