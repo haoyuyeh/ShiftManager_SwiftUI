@@ -14,7 +14,7 @@ struct SettingsView: View {
     var body: some View {
         
         VStack(alignment: .leading, spacing: 1.0){
-            LabelBtnView(label: "Job Titles")
+            LabelBtnView(label: "Job Titles", hasClear: false)
                 .frame(width: .infinity, alignment: .leading)
             let jobs :[String] = ["roll1","roll1","roll1","roll1","roll1",
                 "roll1","roll1","roll1","roll1","roll1",
@@ -24,7 +24,7 @@ struct SettingsView: View {
                 .padding(.bottom)
             
             
-            LabelBtnView(label: "Shifts")
+            LabelBtnView(label: "Shifts", hasClear: false)
                 .frame(width: .infinity, height: .infinity, alignment: .leading)
             let shifts = [(1,"open", "7am~5pm"),(2,"close", "8am~8pm"),(3,"general", "8am~5pm")]
             shiftsView(shifts: shifts)
@@ -33,7 +33,7 @@ struct SettingsView: View {
             
             var dayLimits = ""
             var shiftsLimits = ["","",""]
-            LabelBtnView(label: "Constrains")
+            LabelBtnView(label: "Constrains", hasClear: false)
             constrainsView(shifts: shifts, dayLimits: dayLimits, shiftsLimits: shiftsLimits)
            
             
@@ -45,6 +45,7 @@ struct SettingsView: View {
 
 struct LabelBtnView: View {
     var label: String
+    var hasClear: Bool
     
     var body: some View {
         HStack(){
@@ -60,6 +61,16 @@ struct LabelBtnView: View {
                 Image(systemName: "plus")
                     .padding(.trailing, 8)
             }
+            if hasClear {
+                Button( action: {
+                    // clear all contents
+                }) {
+                    Image(systemName: "clear")
+                        .padding(.trailing, 8)
+                }
+            }
+            
+
         }.border(.black)
     }
 }
