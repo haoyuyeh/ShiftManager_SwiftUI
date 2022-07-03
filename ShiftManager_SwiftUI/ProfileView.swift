@@ -84,7 +84,7 @@ struct staffCardView: View {
                 }
                 .padding(.bottom, 10)
                 
-                LabelBtnView(label: "Skills", hasClear: false)
+                LabelBtnView(label: "Skills", hasClear: false, action: <#() -> Void#>)
                 let jobs :[String] = ["roll1","roll1","roll1","roll1","roll1",
                     "roll1","roll1","roll1","roll1","roll1",
                                       "roll1","roll1","roll1","roll1","roll1",
@@ -92,7 +92,7 @@ struct staffCardView: View {
                 jobView(jobTitles: jobs)
                     .padding(.bottom)
                 
-                LabelBtnView(label: "Day Off", hasClear: true)
+                LabelBtnView(label: "Day Off", hasClear: true, action: <#() -> Void#>)
                 let dayOffs = [(1,"20/6", nil),(2,"23/6", "12pm~12pm")]
 
                 dayOffView(dayOffs: dayOffs)

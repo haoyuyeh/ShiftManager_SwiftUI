@@ -9,13 +9,12 @@ import SwiftUI
 import Combine
 
 struct SettingsView: View {
-    
+    @State var isAuto = false
     
     var body: some View {
         
-        
-        
-        VStack(alignment: .leading, spacing: 1.0){
+        VStack{
+            // Page title
             HStack{
                 Spacer()
                 Text("Settings")
@@ -24,42 +23,66 @@ struct SettingsView: View {
                 Spacer()
             }
             .padding(.bottom, 10)
-            
-            LabelBtnView(label: "Job Titles", hasClear: false)
-            let jobs :[String] = ["roll1","roll1","roll1","roll1","roll1",
-                "roll1","roll1","roll1","roll1","roll1",
-                                  "roll1","roll1","roll1","roll1","roll1",
-                                  "roll1","roll1","roll1","roll1","roll1"]
-            jobView(jobTitles: jobs)
-                .padding(.bottom)
-            
-            
-            LabelBtnView(label: "Shifts", hasClear: false)
-            let shifts = [(1,"open", "7am~5pm"),(2,"close", "8am~8pm"),(3,"general", "8am~5pm")]
-            shiftsView(shifts: shifts)
-                .padding(.bottom)
-            
-            
-            var dayLimits = ""
-            var shiftsLimits = ["","",""]
-            Text("Constrains")
-                .bold()
-                .font(.largeTitle)
-                .foregroundColor(.white)
-                .padding(.horizontal, 5)
-                .background(.black)
-            constrainsView(shifts: shifts, dayLimits: dayLimits, shiftsLimits: shiftsLimits)
-           
-            
+            Form{
+                VStack(alignment: .leading, spacing: 1.0){
+                    
+                    // list all available job positions
+                    LabelBtnView(label: "Job Titles", hasClear: false, action: <#() -> Void#>)
+                    // data retrieve from core data
+                    let jobs :[String] = ["roll1","roll1","roll1","roll1","roll1",
+                                          "roll1","roll1","roll1","roll1","roll1",
+                                          "roll1","roll1","roll1","roll1","roll1",
+                                          "roll1","roll1","roll1","roll1","roll1"]
+                    jobView(jobTitles: jobs)
+                        .padding(.bottom)
+                    
+                    // list all shifts
+                    LabelBtnView(label: "Shifts", hasClear: false, action: <#() -> Void#>)
+                    // retrieve from core data
+                    let shifts = [(1,"open", "7am~5pm"),(2,"close", "8am~8pm"),(3,"general", "8am~5pm")]
+                    shiftsView(shifts: shifts)
+                        .padding(.bottom)
+                    
+                    // list all constrains for auto shifts arrangement
+                    
+                    Toggle("Auto Shifts Arrange", isOn: $isAuto)
+                    var dayLimits = ""
+                    var shiftsLimits = ["","",""]
+                    if isAuto {
+                        Text("Constrains")
+                            .bold()
+                            .font(.largeTitle)
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 5)
+                            .background(.black)
+                        constrainsView(shifts: shifts, dayLimits: dayLimits, shiftsLimits: shiftsLimits)
+                    }
+                }
+                
+                
+                
+            }
+            .frame( maxHeight: .infinity, alignment: Alignment.topLeading)
+            .padding([.top, .leading], 5)
         }
-        .frame( maxHeight: .infinity, alignment: Alignment.topLeading)
-        .padding([.top, .leading], 5)
+        
     }
 }
-
+///***********************************************************
+///
+/// this is a view with a plus button
+///
+/// - label: name of the view
+/// - hasClear: determine the view has a clear button or not
+/// - action: the function will be activated when the plus button is pressed
+/// - clear: clear all the data which is added by the plus button
+///
+///************************************************************
 struct LabelBtnView: View {
     var label: String
     var hasClear: Bool
+    var action: () -> Void
+    var clear:(()->Void)?
     
     var body: some View {
         
@@ -71,7 +94,8 @@ struct LabelBtnView: View {
                 .padding(.horizontal, 5)
                 .background(.black)
             Button(action: {
-                // show user input prompt
+                // show user input prompt to get job's name
+                self.action()
             }){
                 Image(systemName: "plus")
                     .padding(.trailing, 8)
@@ -85,11 +109,17 @@ struct LabelBtnView: View {
                 }
             }
             
-
+            
         }.border(.black)
     }
 }
-
+///***********************************************************
+///
+/// this is a view showing all available job positions
+///
+/// - jobTitles: list of job positions
+///
+///************************************************************
 struct jobView: View {
     var jobTitles: [String]
     
@@ -105,7 +135,13 @@ struct jobView: View {
         }
     }
 }
-
+///***********************************************************
+///
+/// this is a view showing all available shifts
+///
+/// - shifts: list of shifts
+///
+///************************************************************
 struct shiftsView: View {
     var shifts: [(id: Int, name: String, time: String)]
     
@@ -124,18 +160,26 @@ struct shiftsView: View {
         }
     }
 }
-
+///***********************************************************
+///
+/// showing some constrains needed to be filled for enabling the auto shifts arrange
+/// function
+///
+/// - label: name of the view
+/// - hasClear: determine the view has a clear button or not
+/// - action: the function will be activated when the plus button is pressed
+/// - clear: clear all the data which is added by the plus button
+///
+///************************************************************
 struct constrainsView: View {
     var shifts: [(id: Int, name: String, time: String)]
     var dayLimits: String
     var shiftsLimits: [String]
     
     var body: some View {
-        Form{
-            staffLimitsView(limits: dayLimits, limitLabel: "Daily staff limits:")
-            ForEach(shifts, id: \.id) { shift in
-                staffLimitsView(limits: shiftsLimits[shift.id-1], limitLabel: "\(shift.name) shift staff limits:")
-            }
+        staffLimitsView(limits: dayLimits, limitLabel: "Daily staff limits:")
+        ForEach(shifts, id: \.id) { shift in
+            staffLimitsView(limits: shiftsLimits[shift.id-1], limitLabel: "\(shift.name) shift staff limits:")
         }
     }
 }
