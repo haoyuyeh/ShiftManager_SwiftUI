@@ -122,7 +122,9 @@ struct dayOffView: View {
                     .frame(width: 100, height: 40)
                     .padding()
                     .border(.black)
+//                    Divider()
                 }
+                Spacer()
             }
         }
     }

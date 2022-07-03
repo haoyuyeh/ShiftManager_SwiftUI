@@ -42,7 +42,12 @@ struct SettingsView: View {
             
             var dayLimits = ""
             var shiftsLimits = ["","",""]
-            LabelBtnView(label: "Constrains", hasClear: false)
+            Text("Constrains")
+                .bold()
+                .font(.largeTitle)
+                .foregroundColor(.white)
+                .padding(.horizontal, 5)
+                .background(.black)
             constrainsView(shifts: shifts, dayLimits: dayLimits, shiftsLimits: shiftsLimits)
            
             
@@ -126,7 +131,7 @@ struct constrainsView: View {
     var shiftsLimits: [String]
     
     var body: some View {
-        VStack {
+        Form{
             staffLimitsView(limits: dayLimits, limitLabel: "Daily staff limits:")
             ForEach(shifts, id: \.id) { shift in
                 staffLimitsView(limits: shiftsLimits[shift.id-1], limitLabel: "\(shift.name) shift staff limits:")

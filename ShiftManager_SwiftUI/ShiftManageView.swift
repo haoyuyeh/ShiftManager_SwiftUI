@@ -10,54 +10,47 @@ import SwiftUI
 struct ShiftManageView: View {
     var body: some View {
         GeometryReader{ geo in
-            
-            ScrollView{
-                VStack {
-                    HStack{
-                        Spacer()
-                        Text("Shifts Arrange")
-                            .bold()
-                            .font(.largeTitle)
-                        Spacer()
+            VStack{
+                HStack{
+                    Spacer()
+                    Text("Shifts Arrange")
+                        .bold()
+                        .font(.largeTitle)
+                    Spacer()
+                }
+                Form{
+                    VStack {
+                        HStack{
+                            Spacer()
+                            Text("Mon(20/6)")
+                                .frame(maxWidth: geo.size.width*0.4)
+                            Text("Hours")
+                                .frame(maxWidth: geo.size.width*0.2)
+                        }
+                        .padding()
+                        Group{
+                            staffRow()
+                                .padding(.bottom,10)
+                            staffRow()
+                                .padding(.bottom,10)
+                            staffRow()
+                                .padding(.bottom,10)
+                            staffRow()
+                                .padding(.bottom,10)
+                            staffRow()
+                                .padding(.bottom,10)
+                            staffRow()
+                                .padding(.bottom,10)
+                            staffRow()
+                                .padding(.bottom,10)
+                            staffRow()
+                                .padding(.bottom,10)
+                        }
+                        
                     }
-                    .padding(.bottom, 10)
-                    
-                    HStack{
-                        Spacer()
-                        Text("Mon(20/6)")
-                            .frame(maxWidth: geo.size.width*0.4)
-                            .border(.red)
-                        Text("Hours")
-                            .frame(maxWidth: geo.size.width*0.2)
-                            .border(.red)
-                    }
-                    .padding()
-                    .border(.black)
-                    Group{
-                        staffRow()
-                            .padding(.bottom,10)
-                        staffRow()
-                            .padding(.bottom,10)
-                        staffRow()
-                            .padding(.bottom,10)
-                        staffRow()
-                            .padding(.bottom,10)
-                        staffRow()
-                            .padding(.bottom,10)
-                        staffRow()
-                            .padding(.bottom,10)
-                        staffRow()
-                            .padding(.bottom,10)
-                        staffRow()
-                            .padding(.bottom,10)
-                        staffRow()
-                            .padding(.bottom,10)
-                        staffRow()
-                            .padding(.bottom,10)
-                    }
-                    
                 }
             }
+            
         }
     }
 }
@@ -74,7 +67,9 @@ struct staffRow: View {
                     Spacer()
                 Text("Angus")
                     .frame(maxWidth: geo.size.width*0.2)
-                
+                Divider()
+                    .frame(width: 4)
+                    .overlay(.black)
                 
                 HStack(alignment: .center){
                         Picker(selection: $jobSelection, label: Text("job")) {
@@ -94,14 +89,13 @@ struct staffRow: View {
                         .frame(maxWidth: .infinity)
                     }
                     .frame(maxWidth: geo.size.width*4)
-//                    .border(.green)
-                
+                Divider()
+                    .frame(width: 4)
+                    .overlay(.black)
                 Text("10")
                     .frame(maxWidth: geo.size.width*0.2)
-//                    .border(.green)
             }
-//            .border(.black)
-            
+            Divider()
         }
     }
 }
