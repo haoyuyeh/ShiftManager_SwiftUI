@@ -27,19 +27,22 @@
         <attribute name="uuid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="weeklyWorkHourLimits" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="dayOff" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="DayOff" inverseName="belongTo" inverseEntity="DayOff"/>
+        <relationship name="employedBy" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Store" inverseName="employees" inverseEntity="Store"/>
         <relationship name="shifts" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Shift" inverseName="attendingEmployees" inverseEntity="Shift"/>
         <relationship name="skills" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Job" inverseName="availableStaffs" inverseEntity="Job"/>
     </entity>
     <entity name="Store" representedClassName="Store" syncable="YES" codeGenerationType="class">
+        <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="uuid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <relationship name="employees" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Staff" inverseName="employedBy" inverseEntity="Staff"/>
         <relationship name="jobs" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Job" inverseName="belongTo" inverseEntity="Job"/>
         <relationship name="shifts" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Shift" inverseName="belongTo" inverseEntity="Shift"/>
     </entity>
     <elements>
-        <element name="Staff" positionX="-317.76171875" positionY="-108.6953125" width="128" height="28"/>
-        <element name="Shift" positionX="-219.5859375" positionY="-185.02734375" width="128" height="28"/>
+        <element name="Staff" positionX="-317.76171875" positionY="-108.6953125" width="128" height="148"/>
+        <element name="Shift" positionX="-219.5859375" positionY="-185.02734375" width="116.65234375" height="28"/>
         <element name="DayOff" positionX="-317.5546875" positionY="-31.96875" width="128" height="28"/>
-        <element name="Store" positionX="-317.20703125" positionY="-248" width="128" height="28"/>
+        <element name="Store" positionX="-317.20703125" positionY="-248" width="128" height="118"/>
         <element name="Job" positionX="-416.50390625" positionY="-187.9453125" width="128" height="28"/>
     </elements>
 </model>

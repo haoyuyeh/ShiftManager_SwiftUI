@@ -9,7 +9,8 @@ import SwiftUI
 
 struct ProfileView: View {
     var weekHourLimits = ""
-    
+    @StateObject private var profileViewModel = ProfileViewModel()
+   
     var body: some View {
         
         VStack{
@@ -33,14 +34,14 @@ struct ProfileView: View {
             
             GeometryReader{g in
                 ZStack{
-                    staffCardView(staffName: "", bgColor: .black, weekHourLimits: weekHourLimits)
+                    staffCardView(staffName: "", bgColor: .black, weekHourLimits: weekHourLimits, profileViewModel: profileViewModel)
                         .position(x: g.size.width*0.6, y: g.size.height*0.7)
                         .offset(x: 40, y: -60)
                     
-                    staffCardView(staffName: "", bgColor: .green, weekHourLimits: weekHourLimits)
+                    staffCardView(staffName: "", bgColor: .green, weekHourLimits: weekHourLimits, profileViewModel: profileViewModel)
                         .position(x: g.size.width*0.6, y: g.size.height*0.7)
                         .offset(x: 20, y: -30)
-                    staffCardView(staffName: "Angus", bgColor: .red, weekHourLimits: weekHourLimits)
+                    staffCardView(staffName: "Angus", bgColor: .red, weekHourLimits: weekHourLimits, profileViewModel: profileViewModel)
                         .position(x: g.size.width*0.6, y: g.size.height*0.7)
                     
                 }
@@ -53,6 +54,9 @@ struct staffCardView: View {
     var staffName: String
     var bgColor: Color
     @State var weekHourLimits: String
+    @ObservedObject var profileViewModel: ProfileViewModel
+    
+    
     var body: some View {
         
         GeometryReader{ geometry in
@@ -84,7 +88,7 @@ struct staffCardView: View {
                 }
                 .padding(.bottom, 10)
                 
-                LabelBtnView(label: "Skills", hasClear: false, action: <#() -> Void#>)
+                LabelBtnView(label: "Skills", hasClear: false, action: profileViewModel.addSkill)
                 let jobs :[String] = ["roll1","roll1","roll1","roll1","roll1",
                     "roll1","roll1","roll1","roll1","roll1",
                                       "roll1","roll1","roll1","roll1","roll1",
@@ -92,7 +96,7 @@ struct staffCardView: View {
                 jobView(jobTitles: jobs)
                     .padding(.bottom)
                 
-                LabelBtnView(label: "Day Off", hasClear: true, action: <#() -> Void#>)
+                LabelBtnView(label: "Day Off", hasClear: true, action: profileViewModel.addDayOff)
                 let dayOffs = [(1,"20/6", nil),(2,"23/6", "12pm~12pm")]
 
                 dayOffView(dayOffs: dayOffs)

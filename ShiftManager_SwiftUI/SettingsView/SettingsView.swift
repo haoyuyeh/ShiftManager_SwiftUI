@@ -10,6 +10,7 @@ import Combine
 
 struct SettingsView: View {
     @State var isAuto = false
+    @StateObject private var settingsViewModel = SettingsViewModel()
     
     var body: some View {
         
@@ -27,20 +28,16 @@ struct SettingsView: View {
                 VStack(alignment: .leading, spacing: 1.0){
                     
                     // list all available job positions
-                    LabelBtnView(label: "Job Titles", hasClear: false, action: <#() -> Void#>)
+                    LabelBtnView(label: "Job Titles", hasClear: false, action: settingsViewModel.addJob)
+                    
                     // data retrieve from core data
-                    let jobs :[String] = ["roll1","roll1","roll1","roll1","roll1",
-                                          "roll1","roll1","roll1","roll1","roll1",
-                                          "roll1","roll1","roll1","roll1","roll1",
-                                          "roll1","roll1","roll1","roll1","roll1"]
-                    jobView(jobTitles: jobs)
+                    
+                    jobView(jobTitles: settingsViewModel.getAllJobs())
                         .padding(.bottom)
                     
                     // list all shifts
-                    LabelBtnView(label: "Shifts", hasClear: false, action: <#() -> Void#>)
-                    // retrieve from core data
-                    let shifts = [(1,"open", "7am~5pm"),(2,"close", "8am~8pm"),(3,"general", "8am~5pm")]
-                    shiftsView(shifts: shifts)
+                    LabelBtnView(label: "Shifts", hasClear: false, action: settingsViewModel.addShift)
+                    shiftsView(shifts: settingsViewModel.getAllShifts())
                         .padding(.bottom)
                     
                     // list all constrains for auto shifts arrangement
@@ -55,7 +52,7 @@ struct SettingsView: View {
                             .foregroundColor(.white)
                             .padding(.horizontal, 5)
                             .background(.black)
-                        constrainsView(shifts: shifts, dayLimits: dayLimits, shiftsLimits: shiftsLimits)
+                        constrainsView(shifts: settingsViewModel.getAllShifts(), dayLimits: dayLimits, shiftsLimits: shiftsLimits)
                     }
                 }
                 
@@ -94,7 +91,7 @@ struct LabelBtnView: View {
                 .padding(.horizontal, 5)
                 .background(.black)
             Button(action: {
-                // show user input prompt to get job's name
+                // do whatever you want for the plus button
                 self.action()
             }){
                 Image(systemName: "plus")
@@ -103,6 +100,7 @@ struct LabelBtnView: View {
             if hasClear {
                 Button( action: {
                     // clear all contents
+                    self.clear
                 }) {
                     Image(systemName: "clear")
                         .padding(.trailing, 8)

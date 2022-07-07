@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		7B0513E228767A5400BCC0E1 /* DataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 7B0513E028767A5400BCC0E1 /* DataModel.xcdatamodeld */; };
+		7B0513E5287682E600BCC0E1 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B0513E4287682E600BCC0E1 /* PersistenceController.swift */; };
+		7B0513EA2876BC6800BCC0E1 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B0513E92876BC6800BCC0E1 /* SettingsViewModel.swift */; };
+		7B0513EC2876BD5B00BCC0E1 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B0513EB2876BD5B00BCC0E1 /* ProfileViewModel.swift */; };
 		7BE2EC13286D10E40008BB0F /* ShiftManager_SwiftUIApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BE2EC12286D10E40008BB0F /* ShiftManager_SwiftUIApp.swift */; };
 		7BE2EC15286D10E40008BB0F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BE2EC14286D10E40008BB0F /* ContentView.swift */; };
 		7BE2EC17286D10E50008BB0F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7BE2EC16286D10E50008BB0F /* Assets.xcassets */; };
@@ -19,6 +22,9 @@
 
 /* Begin PBXFileReference section */
 		7B0513E128767A5400BCC0E1 /* DataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataModel.xcdatamodel; sourceTree = "<group>"; };
+		7B0513E4287682E600BCC0E1 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
+		7B0513E92876BC6800BCC0E1 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
+		7B0513EB2876BD5B00BCC0E1 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		7BE2EC0F286D10E40008BB0F /* ShiftManager_SwiftUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ShiftManager_SwiftUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7BE2EC12286D10E40008BB0F /* ShiftManager_SwiftUIApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShiftManager_SwiftUIApp.swift; sourceTree = "<group>"; };
 		7BE2EC14286D10E40008BB0F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -40,14 +46,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		7B0513DC287679CA00BCC0E1 /* ContentView */ = {
-			isa = PBXGroup;
-			children = (
-				7BE2EC14286D10E40008BB0F /* ContentView.swift */,
-			);
-			path = ContentView;
-			sourceTree = "<group>";
-		};
 		7B0513DD287679D600BCC0E1 /* ShiftManageView */ = {
 			isa = PBXGroup;
 			children = (
@@ -60,6 +58,7 @@
 			isa = PBXGroup;
 			children = (
 				7BE2EC22286D19040008BB0F /* ProfileView.swift */,
+				7B0513EB2876BD5B00BCC0E1 /* ProfileViewModel.swift */,
 			);
 			path = ProfileView;
 			sourceTree = "<group>";
@@ -68,6 +67,7 @@
 			isa = PBXGroup;
 			children = (
 				7BE2EC24286D19300008BB0F /* SettingsView.swift */,
+				7B0513E92876BC6800BCC0E1 /* SettingsViewModel.swift */,
 			);
 			path = SettingsView;
 			sourceTree = "<group>";
@@ -78,6 +78,16 @@
 				7B0513E028767A5400BCC0E1 /* DataModel.xcdatamodeld */,
 			);
 			path = DataModel;
+			sourceTree = "<group>";
+		};
+		7B0513E628768A0D00BCC0E1 /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				7BE2EC12286D10E40008BB0F /* ShiftManager_SwiftUIApp.swift */,
+				7B0513E4287682E600BCC0E1 /* PersistenceController.swift */,
+				7BE2EC14286D10E40008BB0F /* ContentView.swift */,
+			);
+			path = Main;
 			sourceTree = "<group>";
 		};
 		7BE2EC06286D10E40008BB0F = {
@@ -99,9 +109,8 @@
 		7BE2EC11286D10E40008BB0F /* ShiftManager_SwiftUI */ = {
 			isa = PBXGroup;
 			children = (
-				7BE2EC12286D10E40008BB0F /* ShiftManager_SwiftUIApp.swift */,
+				7B0513E628768A0D00BCC0E1 /* Main */,
 				7B0513E328767A6A00BCC0E1 /* DataModel */,
-				7B0513DC287679CA00BCC0E1 /* ContentView */,
 				7B0513DD287679D600BCC0E1 /* ShiftManageView */,
 				7B0513DE287679E600BCC0E1 /* ProfileView */,
 				7B0513DF287679ED00BCC0E1 /* SettingsView */,
@@ -190,11 +199,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				7BE2EC23286D19040008BB0F /* ProfileView.swift in Sources */,
+				7B0513E5287682E600BCC0E1 /* PersistenceController.swift in Sources */,
 				7BE2EC27286D19560008BB0F /* ShiftManageView.swift in Sources */,
+				7B0513EC2876BD5B00BCC0E1 /* ProfileViewModel.swift in Sources */,
 				7BE2EC25286D19300008BB0F /* SettingsView.swift in Sources */,
 				7B0513E228767A5400BCC0E1 /* DataModel.xcdatamodeld in Sources */,
 				7BE2EC15286D10E40008BB0F /* ContentView.swift in Sources */,
 				7BE2EC13286D10E40008BB0F /* ShiftManager_SwiftUIApp.swift in Sources */,
+				7B0513EA2876BC6800BCC0E1 /* SettingsViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
