@@ -80,9 +80,9 @@ struct SettingsView: View {
 ///************************************************************
 struct LabelBtnView: View {
     var label: String
-    var hasClear: Bool
+    var hasClear: Bool = false
     var action: () -> Void
-    var clear:(()->Void)?
+    var clear:(()->Void)? = nil
     
     var body: some View {
         
