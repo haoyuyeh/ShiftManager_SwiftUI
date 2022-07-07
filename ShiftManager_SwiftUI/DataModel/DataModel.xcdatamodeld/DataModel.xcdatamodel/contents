@@ -10,6 +10,7 @@
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="priority" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="uuid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <relationship name="activeJob" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WorkDay" inverseName="position" inverseEntity="WorkDay"/>
         <relationship name="availableStaffs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Staff" inverseName="skills" inverseEntity="Staff"/>
         <relationship name="belongTo" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Store" inverseName="jobs" inverseEntity="Store"/>
     </entity>
@@ -19,8 +20,8 @@
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="start" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="uuid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
-        <relationship name="attendingEmployees" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Staff" inverseName="shifts" inverseEntity="Staff"/>
         <relationship name="belongTo" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Store" inverseName="shifts" inverseEntity="Store"/>
+        <relationship name="on" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WorkDay" inverseName="timeSlot" inverseEntity="WorkDay"/>
     </entity>
     <entity name="Staff" representedClassName="Staff" syncable="YES" codeGenerationType="class">
         <attribute name="name" optional="YES" attributeType="String"/>
@@ -28,8 +29,8 @@
         <attribute name="weeklyWorkHourLimits" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="dayOff" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="DayOff" inverseName="belongTo" inverseEntity="DayOff"/>
         <relationship name="employedBy" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Store" inverseName="employees" inverseEntity="Store"/>
-        <relationship name="shifts" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Shift" inverseName="attendingEmployees" inverseEntity="Shift"/>
         <relationship name="skills" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Job" inverseName="availableStaffs" inverseEntity="Job"/>
+        <relationship name="workOn" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WorkDay" inverseName="assignTo" inverseEntity="WorkDay"/>
     </entity>
     <entity name="Store" representedClassName="Store" syncable="YES" codeGenerationType="class">
         <attribute name="name" optional="YES" attributeType="String"/>
@@ -38,11 +39,19 @@
         <relationship name="jobs" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Job" inverseName="belongTo" inverseEntity="Job"/>
         <relationship name="shifts" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Shift" inverseName="belongTo" inverseEntity="Shift"/>
     </entity>
+    <entity name="WorkDay" representedClassName="WorkDay" syncable="YES" codeGenerationType="class">
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="uuid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <relationship name="assignTo" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Staff" inverseName="workOn" inverseEntity="Staff"/>
+        <relationship name="position" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Job" inverseName="activeJob" inverseEntity="Job"/>
+        <relationship name="timeSlot" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Shift" inverseName="on" inverseEntity="Shift"/>
+    </entity>
     <elements>
         <element name="Staff" positionX="-317.76171875" positionY="-108.6953125" width="128" height="148"/>
-        <element name="Shift" positionX="-219.5859375" positionY="-185.02734375" width="116.65234375" height="28"/>
+        <element name="Shift" positionX="-219.5859375" positionY="-185.02734375" width="116.65234375" height="148"/>
         <element name="DayOff" positionX="-317.5546875" positionY="-31.96875" width="128" height="28"/>
         <element name="Store" positionX="-317.20703125" positionY="-248" width="128" height="118"/>
-        <element name="Job" positionX="-416.50390625" positionY="-187.9453125" width="128" height="28"/>
+        <element name="Job" positionX="-416.50390625" positionY="-187.9453125" width="128" height="133"/>
+        <element name="WorkDay" positionX="-324" positionY="-108" width="128" height="104"/>
     </elements>
 </model>

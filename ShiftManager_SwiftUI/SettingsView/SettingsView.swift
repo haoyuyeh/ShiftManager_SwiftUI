@@ -8,9 +8,22 @@
 import SwiftUI
 import Combine
 
+enum TargetEntity {
+    case store
+    case job
+    case shift
+    case dayOff
+}
+enum TargetViewModel {
+    case settings
+    case profile
+}
+
 struct SettingsView: View {
-    @State var isAuto = false
-    @StateObject private var settingsViewModel = SettingsViewModel()
+    @StateObject var settingsViewModel = SettingsViewModel()
+    
+    @State private var storeSelection = 0
+    @State private var isAuto = false
     
     var body: some View {
         
@@ -27,17 +40,33 @@ struct SettingsView: View {
             Form{
                 VStack(alignment: .leading, spacing: 1.0){
                     
+                    // list all stores under managing
+                    LabelBtnView(label: "Store", plusBtnDisabled: false, hasClear: false, targetEntity: TargetEntity.store, textFieldPlaceHolder: "Store Name", viewModel:  settingsViewModel)
+                    oneRowDisplayView(data: settingsViewModel.getAllStores())
+                        .padding(.bottom)
+                    
+                    Picker(selection: $storeSelection, label: Text("Store")) {
+                        ForEach(0..<settingsViewModel.getAllStores().count, id:\.self) {
+                            Text(settingsViewModel.getAllStores()[$0])
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    .onChange(of: storeSelection) { _ in
+                        settingsViewModel.setCurrentStore(index: storeSelection)
+                    }
+                    
+                    
+                    
+                    
+                    
                     // list all available job positions
-                    LabelBtnView(label: "Job Titles", hasClear: false, action: settingsViewModel.addJob)
-                    
-                    // data retrieve from core data
-                    
-                    jobView(jobTitles: settingsViewModel.getAllJobs())
+                    LabelBtnView(label: "Jobs", plusBtnDisabled: !settingsViewModel.hasStore(), hasClear: false, targetEntity: TargetEntity.job, textFieldPlaceHolder: "Job Name", viewModel: settingsViewModel)
+                    oneRowDisplayView(data: settingsViewModel.getAllJobs())
                         .padding(.bottom)
                     
                     // list all shifts
-                    LabelBtnView(label: "Shifts", hasClear: false, action: settingsViewModel.addShift)
-                    shiftsView(shifts: settingsViewModel.getAllShifts())
+                    LabelBtnView(label: "Shifts", plusBtnDisabled: !settingsViewModel.hasStore(), hasClear: false, targetEntity: TargetEntity.shift, textFieldPlaceHolder: "Shift Name", viewModel: settingsViewModel)
+                    twoRowDisplayView(data: settingsViewModel.getAllShifts())
                         .padding(.bottom)
                     
                     // list all constrains for auto shifts arrangement
@@ -55,9 +84,6 @@ struct SettingsView: View {
                         constrainsView(shifts: settingsViewModel.getAllShifts(), dayLimits: dayLimits, shiftsLimits: shiftsLimits)
                     }
                 }
-                
-                
-                
             }
             .frame( maxHeight: .infinity, alignment: Alignment.topLeading)
             .padding([.top, .leading], 5)
@@ -77,9 +103,17 @@ struct SettingsView: View {
 ///************************************************************
 struct LabelBtnView: View {
     var label: String
+    var plusBtnDisabled: Bool
     var hasClear: Bool = false
-    var action: () -> Void
-    var clear:(()->Void)? = nil
+    var targetEntity: TargetEntity
+    var targetViewModel: TargetViewModel
+    var textFieldPlaceHolder: String
+    
+    @ObservedObject var settingsViewModel: SettingsViewModel
+    @ObservedObject  var profileViewModel: ProfileViewModel
+    
+    @State private var textEntered = ""
+    @State private var showingAlert = false
     
     var body: some View {
         
@@ -90,17 +124,36 @@ struct LabelBtnView: View {
                 .foregroundColor(.white)
                 .padding(.horizontal, 5)
                 .background(.black)
-            Button(action: {
-                // do whatever you want for the plus button
-                self.action()
-            }){
-                Image(systemName: "plus")
-                    .padding(.trailing, 8)
+            ZStack{
+                Button(action: {
+                    // show alert to get input from user, then do whatever you want for the plus button
+                    self.showingAlert.toggle()
+                    self.textEntered = ""
+                }){
+                    Image(systemName: "plus")
+                        .padding(.trailing, 8)
+                }
+                .disabled(plusBtnDisabled)
+                
+                switch (targetViewModel, targetEntity) {
+                case (TargetViewModel.settings, TargetEntity.store):
+                    OneInputAlertView(textEntered: $textEntered, showingAlert: $showingAlert, alertTitle: "Adding...", placeHolder: textFieldPlaceHolder, action: settingsViewModel.addStore)
+                case (_, _):
+                    print("")
+                }
+                
             }
+            
             if hasClear {
                 Button( action: {
                     // clear all contents
-                    self.clear
+                    switch targetViewModel {
+                    case .settings:
+                        settingsViewModel.clear(entity: targetEntity)
+                    case .profile:
+                        profileViewModel.clear()
+                    }
+                    
                 }) {
                     Image(systemName: "clear")
                         .padding(.trailing, 8)
@@ -113,18 +166,18 @@ struct LabelBtnView: View {
 }
 ///***********************************************************
 ///
-/// this is a view showing all available job positions
+/// this is a view displaying a row of input data
 ///
-/// - jobTitles: list of job positions
+/// - data: list of data for displaying
 ///
 ///************************************************************
-struct jobView: View {
-    var jobTitles: [String]
+struct oneRowDisplayView: View {
+    var data: [String]
     
     var body: some View {
         ScrollView(.horizontal) {
             HStack(spacing:1){
-                ForEach(jobTitles, id : \.self){
+                ForEach(data, id : \.self){
                     Text($0)
                         .padding(.all, 5.0)
                         .border(.black)
@@ -135,21 +188,21 @@ struct jobView: View {
 }
 ///***********************************************************
 ///
-/// this is a view showing all available shifts
+/// this is a view displaying two rows of input data
 ///
-/// - shifts: list of shifts
+/// - data: list of data for displaying
 ///
 ///************************************************************
-struct shiftsView: View {
-    var shifts: [(id: Int, name: String, time: String)]
+struct twoRowDisplayView: View {
+    var data: [(id: Int, row1: String, row2: String)]
     
     var body: some View {
         ScrollView(.horizontal) {
             HStack(spacing: 1) {
-                ForEach(shifts, id: \.id) {shift in
+                ForEach(data, id: \.id) {input in
                     VStack{
-                        Text(shift.name)
-                        Text(shift.time)
+                        Text(input.row1)
+                        Text(input.row2)
                     }
                     .padding()
                     .border(.black)
@@ -175,16 +228,10 @@ struct constrainsView: View {
     var shiftsLimits: [String]
     
     var body: some View {
-        staffLimitsView(limits: dayLimits, limitLabel: "Daily staff limits:")
+        staffLimitsView(limits: dayLimits, limitLabel: "Daily HR limits:")
         ForEach(shifts, id: \.id) { shift in
-            staffLimitsView(limits: shiftsLimits[shift.id-1], limitLabel: "\(shift.name) shift staff limits:")
+            staffLimitsView(limits: shiftsLimits[shift.id-1], limitLabel: "\(shift.name) shift HR limits:")
         }
-    }
-}
-
-struct SettingsView_Previews: PreviewProvider {
-    static var previews: some View {
-        SettingsView()
     }
 }
 
@@ -195,7 +242,7 @@ struct staffLimitsView: View {
     var body: some View {
         HStack {
             Text(limitLabel)
-            TextField("Input Numbers Only", text: $limits)
+            TextField("Numbers Only", text: $limits)
                 .padding(.leading)
                 .border(.black)
                 .padding()
@@ -205,5 +252,11 @@ struct staffLimitsView: View {
                     }
                 }
         }
+    }
+}
+
+struct SettingsView_Previews: PreviewProvider {
+    static var previews: some View {
+        SettingsView()
     }
 }

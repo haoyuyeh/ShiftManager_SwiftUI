@@ -11,6 +11,7 @@
 		7B0513E5287682E600BCC0E1 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B0513E4287682E600BCC0E1 /* PersistenceController.swift */; };
 		7B0513EA2876BC6800BCC0E1 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B0513E92876BC6800BCC0E1 /* SettingsViewModel.swift */; };
 		7B0513EC2876BD5B00BCC0E1 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B0513EB2876BD5B00BCC0E1 /* ProfileViewModel.swift */; };
+		7B0513EF2876FEB600BCC0E1 /* CustumAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B0513EE2876FEB600BCC0E1 /* CustumAlert.swift */; };
 		7BE2EC13286D10E40008BB0F /* ShiftManager_SwiftUIApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BE2EC12286D10E40008BB0F /* ShiftManager_SwiftUIApp.swift */; };
 		7BE2EC15286D10E40008BB0F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BE2EC14286D10E40008BB0F /* ContentView.swift */; };
 		7BE2EC17286D10E50008BB0F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7BE2EC16286D10E50008BB0F /* Assets.xcassets */; };
@@ -25,6 +26,7 @@
 		7B0513E4287682E600BCC0E1 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
 		7B0513E92876BC6800BCC0E1 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		7B0513EB2876BD5B00BCC0E1 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
+		7B0513EE2876FEB600BCC0E1 /* CustumAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustumAlert.swift; sourceTree = "<group>"; };
 		7BE2EC0F286D10E40008BB0F /* ShiftManager_SwiftUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ShiftManager_SwiftUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7BE2EC12286D10E40008BB0F /* ShiftManager_SwiftUIApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShiftManager_SwiftUIApp.swift; sourceTree = "<group>"; };
 		7BE2EC14286D10E40008BB0F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -90,6 +92,14 @@
 			path = Main;
 			sourceTree = "<group>";
 		};
+		7B0513ED2876FE9A00BCC0E1 /* Helper */ = {
+			isa = PBXGroup;
+			children = (
+				7B0513EE2876FEB600BCC0E1 /* CustumAlert.swift */,
+			);
+			path = Helper;
+			sourceTree = "<group>";
+		};
 		7BE2EC06286D10E40008BB0F = {
 			isa = PBXGroup;
 			children = (
@@ -109,6 +119,7 @@
 		7BE2EC11286D10E40008BB0F /* ShiftManager_SwiftUI */ = {
 			isa = PBXGroup;
 			children = (
+				7B0513ED2876FE9A00BCC0E1 /* Helper */,
 				7B0513E628768A0D00BCC0E1 /* Main */,
 				7B0513E328767A6A00BCC0E1 /* DataModel */,
 				7B0513DD287679D600BCC0E1 /* ShiftManageView */,
@@ -201,6 +212,7 @@
 				7BE2EC23286D19040008BB0F /* ProfileView.swift in Sources */,
 				7B0513E5287682E600BCC0E1 /* PersistenceController.swift in Sources */,
 				7BE2EC27286D19560008BB0F /* ShiftManageView.swift in Sources */,
+				7B0513EF2876FEB600BCC0E1 /* CustumAlert.swift in Sources */,
 				7B0513EC2876BD5B00BCC0E1 /* ProfileViewModel.swift in Sources */,
 				7BE2EC25286D19300008BB0F /* SettingsView.swift in Sources */,
 				7B0513E228767A5400BCC0E1 /* DataModel.xcdatamodeld in Sources */,

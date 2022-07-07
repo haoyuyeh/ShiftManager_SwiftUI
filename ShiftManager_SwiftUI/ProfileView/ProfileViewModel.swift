@@ -17,4 +17,8 @@ class ProfileViewModel: ObservableObject {
     func addDayOff() {
         
     }
+    
+    func clear() {
+        
+    }
 }
