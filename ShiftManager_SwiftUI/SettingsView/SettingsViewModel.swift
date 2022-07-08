@@ -27,26 +27,16 @@ class SettingsViewModel: ObservableObject {
         persistenceController.save()
     }
     
-    func addShift() {
+    func addShift(info: String) {
         
     }
     
-    func addJob() {
+    func addJob(info: String) {
         
     }
     
-    func clear(entity: TargetEntity) {
-        switch entity {
-        case .store:
-            for store in stores {
-                persistenceController.delete(store)
-                persistenceController.save()
-            }
-        case .job:
-            print("")
-        case .shift:
-            print("")
-        }
+    func clear() {
+       
     }
     
     func hasStore() -> Bool {

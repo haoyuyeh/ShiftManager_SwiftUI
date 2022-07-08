@@ -10,11 +10,11 @@ import Combine
 class ProfileViewModel: ObservableObject {
     
     
-    func addSkill() {
+    func addSkill(info: String) {
         
     }
     
-    func addDayOff() {
+    func addDayOff(info: String) {
         
     }
     

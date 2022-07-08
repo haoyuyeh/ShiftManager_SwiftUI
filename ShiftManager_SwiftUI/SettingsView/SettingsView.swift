@@ -8,17 +8,6 @@
 import SwiftUI
 import Combine
 
-enum TargetEntity {
-    case store
-    case job
-    case shift
-    case dayOff
-}
-enum TargetViewModel {
-    case settings
-    case profile
-}
-
 struct SettingsView: View {
     @StateObject var settingsViewModel = SettingsViewModel()
     
@@ -41,7 +30,7 @@ struct SettingsView: View {
                 VStack(alignment: .leading, spacing: 1.0){
                     
                     // list all stores under managing
-                    LabelBtnView(label: "Store", plusBtnDisabled: false, hasClear: false, targetEntity: TargetEntity.store, textFieldPlaceHolder: "Store Name", viewModel:  settingsViewModel)
+                    LabelBtnView(label: "Store", plusBtnDisabled: false, hasClear: false, textFieldPlaceHolder: "Store Name", action: settingsViewModel.addStore)
                     oneRowDisplayView(data: settingsViewModel.getAllStores())
                         .padding(.bottom)
                     
@@ -55,17 +44,13 @@ struct SettingsView: View {
                         settingsViewModel.setCurrentStore(index: storeSelection)
                     }
                     
-                    
-                    
-                    
-                    
                     // list all available job positions
-                    LabelBtnView(label: "Jobs", plusBtnDisabled: !settingsViewModel.hasStore(), hasClear: false, targetEntity: TargetEntity.job, textFieldPlaceHolder: "Job Name", viewModel: settingsViewModel)
+                    LabelBtnView(label: "Jobs", plusBtnDisabled: !settingsViewModel.hasStore(), hasClear: false, textFieldPlaceHolder: "Job Name", action: settingsViewModel.addJob)
                     oneRowDisplayView(data: settingsViewModel.getAllJobs())
                         .padding(.bottom)
                     
                     // list all shifts
-                    LabelBtnView(label: "Shifts", plusBtnDisabled: !settingsViewModel.hasStore(), hasClear: false, targetEntity: TargetEntity.shift, textFieldPlaceHolder: "Shift Name", viewModel: settingsViewModel)
+                    LabelBtnView(label: "Shifts", plusBtnDisabled: !settingsViewModel.hasStore(), hasClear: false, textFieldPlaceHolder: "Shift Name", action: settingsViewModel.addShift)
                     twoRowDisplayView(data: settingsViewModel.getAllShifts())
                         .padding(.bottom)
                     
@@ -105,18 +90,13 @@ struct LabelBtnView: View {
     var label: String
     var plusBtnDisabled: Bool
     var hasClear: Bool = false
-    var targetEntity: TargetEntity
-    var targetViewModel: TargetViewModel
     var textFieldPlaceHolder: String
-    
-    @ObservedObject var settingsViewModel: SettingsViewModel
-    @ObservedObject  var profileViewModel: ProfileViewModel
+    var action: (String) -> Void
     
     @State private var textEntered = ""
     @State private var showingAlert = false
     
     var body: some View {
-        
         HStack{
             Text(label)
                 .bold()
@@ -124,44 +104,33 @@ struct LabelBtnView: View {
                 .foregroundColor(.white)
                 .padding(.horizontal, 5)
                 .background(.black)
-            ZStack{
-                Button(action: {
-                    // show alert to get input from user, then do whatever you want for the plus button
-                    self.showingAlert.toggle()
-                    self.textEntered = ""
-                }){
-                    Image(systemName: "plus")
-                        .padding(.trailing, 8)
-                }
-                .disabled(plusBtnDisabled)
-                
-                switch (targetViewModel, targetEntity) {
-                case (TargetViewModel.settings, TargetEntity.store):
-                    OneInputAlertView(textEntered: $textEntered, showingAlert: $showingAlert, alertTitle: "Adding...", placeHolder: textFieldPlaceHolder, action: settingsViewModel.addStore)
-                case (_, _):
-                    print("")
-                }
-                
-            }
             
+            
+            //            NavigationLink(destination: .navigationBarBackButtonHidden(true), isActive: $showingAlert){
+            Button(action: {
+                // show alert to get input from user, then do whatever you want for the plus button
+                self.showingAlert.toggle()
+                self.textEntered = ""
+            }){
+                Image(systemName: "plus")
+                    .padding(.trailing, 8)
+            }
+            .disabled(plusBtnDisabled)
+            
+            // should show another view
+            NavigationLink(destination: OneInputAlertView(textEntered: $textEntered, showingAlert: $showingAlert, alertTitle: label, placeHolder: textFieldPlaceHolder, action: action), isActive: $showingAlert){EmptyView()}
+            
+//                .opacity(showingAlert ? 1 : 0)
             if hasClear {
                 Button( action: {
                     // clear all contents
-                    switch targetViewModel {
-                    case .settings:
-                        settingsViewModel.clear(entity: targetEntity)
-                    case .profile:
-                        profileViewModel.clear()
-                    }
                     
                 }) {
                     Image(systemName: "clear")
                         .padding(.trailing, 8)
                 }
             }
-            
-            
-        }.border(.black)
+        }
     }
 }
 ///***********************************************************
