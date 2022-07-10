@@ -9,6 +9,7 @@ import Combine
 
 class SettingsViewModel: ObservableObject {
     @Published var currentStore: Store? = nil
+    
     let persistenceController = PersistenceController.shared
     
     @Environment(\.managedObjectContext) var managedObjectContext
@@ -25,6 +26,10 @@ class SettingsViewModel: ObservableObject {
         store.uuid = UUID()
         store.name = storeName
         persistenceController.save()
+        if currentStore == nil {
+            currentStore = store
+        }
+        print(storeName)
     }
     
     func addShift(info: String) {
@@ -48,6 +53,7 @@ class SettingsViewModel: ObservableObject {
         for store in stores {
             storesName.append(store.name!)
         }
+        print(storesName)
         return storesName
     }
     

@@ -104,9 +104,9 @@ struct LabelBtnView: View {
                 .foregroundColor(.white)
                 .padding(.horizontal, 5)
                 .background(.black)
-            
-            
-            //            NavigationLink(destination: .navigationBarBackButtonHidden(true), isActive: $showingAlert){
+                .onTapGesture {
+                    
+                }
             Button(action: {
                 // show alert to get input from user, then do whatever you want for the plus button
                 self.showingAlert.toggle()
@@ -116,15 +116,19 @@ struct LabelBtnView: View {
                     .padding(.trailing, 8)
             }
             .disabled(plusBtnDisabled)
-            
+            .fullScreenCover(isPresented: $showingAlert) {
+                self.showingAlert.toggle()
+            } content: {
+                OneInputAlertView(textEntered: $textEntered, showingAlert: $showingAlert, alertTitle: "Adding...", placeHolder: textFieldPlaceHolder, action: action)
+            }
+
+
             // should show another view
             NavigationLink(destination: OneInputAlertView(textEntered: $textEntered, showingAlert: $showingAlert, alertTitle: label, placeHolder: textFieldPlaceHolder, action: action), isActive: $showingAlert){EmptyView()}
-            
-//                .opacity(showingAlert ? 1 : 0)
             if hasClear {
                 Button( action: {
                     // clear all contents
-                    
+
                 }) {
                     Image(systemName: "clear")
                         .padding(.trailing, 8)
