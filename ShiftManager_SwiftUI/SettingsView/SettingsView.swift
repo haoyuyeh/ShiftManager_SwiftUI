@@ -8,6 +8,8 @@
 import SwiftUI
 import Combine
 
+
+
 struct SettingsView: View {
     @StateObject var settingsViewModel = SettingsViewModel()
     
@@ -26,64 +28,68 @@ struct SettingsView: View {
                 Spacer()
             }
             .padding(.bottom, 10)
-            Form{
-                VStack(alignment: .leading, spacing: 1.0){
-                    
-                    // list all stores under managing
-                    LabelBtnView(label: "Store", plusBtnDisabled: false, hasClear: false, textFieldPlaceHolder: "Store Name", action: settingsViewModel.addStore)
-                    oneRowDisplayView(data: settingsViewModel.getAllStores())
-                        .padding(.bottom)
-                    
-                    Picker(selection: $storeSelection, label: Text("Store")) {
-                        ForEach(0..<settingsViewModel.getAllStores().count, id:\.self) {
-                            Text(settingsViewModel.getAllStores()[$0])
-                        }
-                    }
-                    .pickerStyle(.menu)
-                    .onChange(of: storeSelection) { _ in
-                        settingsViewModel.setCurrentStore(index: storeSelection)
-                    }
-                    
-                    // list all available job positions
-                    LabelBtnView(label: "Jobs", plusBtnDisabled: !settingsViewModel.hasStore(), hasClear: false, textFieldPlaceHolder: "Job Name", action: settingsViewModel.addJob)
-                    oneRowDisplayView(data: settingsViewModel.getAllJobs())
-                        .padding(.bottom)
-                    
-                    // list all shifts
-                    LabelBtnView(label: "Shifts", plusBtnDisabled: !settingsViewModel.hasStore(), hasClear: false, textFieldPlaceHolder: "Shift Name", action: settingsViewModel.addShift)
-                    twoRowDisplayView(data: settingsViewModel.getAllShifts())
-                        .padding(.bottom)
-                    
-                    // list all constrains for auto shifts arrangement
-                    
-                    Toggle("Auto Shifts Arrange", isOn: $isAuto)
-                    var dayLimits = ""
-                    var shiftsLimits = ["","",""]
-                    if isAuto {
-                        Text("Constrains")
-                            .bold()
-                            .font(.largeTitle)
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 5)
-                            .background(.black)
-                        constrainsView(shifts: settingsViewModel.getAllShifts(), dayLimits: dayLimits, shiftsLimits: shiftsLimits)
+            VStack(alignment: .leading, spacing: 1.0){
+                
+                // list all stores under managing
+                LabelBtnView(label: "Store", plusBtnDisabled: false, hasClear: false, textFieldPlaceHolder: "Store Name", alertType: .oneTextField, action: settingsViewModel.addStore)
+                oneRowDisplayView(data: settingsViewModel.getAllStores())
+                    .padding(.bottom)
+                
+                // choosing which store you want to manage
+                Picker(selection: $storeSelection, label: Text("Store")) {
+                    ForEach(0..<settingsViewModel.getAllStores().count, id:\.self) {
+                        Text(settingsViewModel.getAllStores()[$0])
                     }
                 }
+                .pickerStyle(.menu)
+                .onChange(of: storeSelection) { _ in
+                    settingsViewModel.updateCurrentStore(index: storeSelection)
+                }
+                
+                // list all available job positions
+                LabelBtnView(label: "Jobs", plusBtnDisabled: !settingsViewModel.hasStore(), hasClear: false, textFieldPlaceHolder: "Job Name", alertType: .oneTextField, action: settingsViewModel.addJob)
+                oneRowDisplayView(data: settingsViewModel.getAllJobs())
+                    .padding(.bottom)
+                
+                // list all shifts
+                LabelBtnView(label: "Shifts", plusBtnDisabled: !settingsViewModel.hasStore(), hasClear: false, textFieldPlaceHolder: "Shift Name", alertType: .oneTextAndTimeSpan, action: settingsViewModel.addShift)
+                twoRowDisplayView(data: settingsViewModel.getAllShifts())
+                    .padding(.bottom)
+                
+                // list all constrains for auto shifts arrangement
+                
+                Toggle("Auto Shifts Arrange", isOn: $isAuto)
+                    .padding(.trailing, 30)
+                var dayLimits = ""
+                var shiftsLimits = ["","",""]
+                if isAuto {
+                    Text("Constrains")
+                        .bold()
+                        .font(.largeTitle)
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 5)
+                        .background(.black)
+                    constrainsView(shifts: settingsViewModel.getAllShifts(), dayLimits: dayLimits, shiftsLimits: shiftsLimits)
+                }
             }
-            .frame( maxHeight: .infinity, alignment: Alignment.topLeading)
-            .padding([.top, .leading], 5)
         }
+        .frame( maxHeight: .infinity, alignment: Alignment.topLeading)
+        .padding([.top, .leading], 5)
         
     }
 }
 ///***********************************************************
 ///
-/// this is a view with a plus button
+/// this is a view with a plus button which can add data to database.
+/// when the plus button pressed, it will provide custom alert view to get responses from users
 ///
 /// - label: name of the view
+/// - plusBtnDisabled: determine the plus btn is enable or not
 /// - hasClear: determine the view has a clear button or not
+/// - textFieldPlaceHolder: input hint for the textField
+/// - alertType: decide which type of alert will be displayed
 /// - action: the function will be activated when the plus button is pressed
-/// - clear: clear all the data which is added by the plus button
+/// - clear: clear all the data which is added by the plus button(optional)
 ///
 ///************************************************************
 struct LabelBtnView: View {
@@ -91,11 +97,13 @@ struct LabelBtnView: View {
     var plusBtnDisabled: Bool
     var hasClear: Bool = false
     var textFieldPlaceHolder: String
+    var alertType: AlertType
     var action: (String) -> Void
     
     @State private var textEntered = ""
     @State private var showingAlert = false
     
+
     var body: some View {
         HStack{
             Text(label)
@@ -104,9 +112,6 @@ struct LabelBtnView: View {
                 .foregroundColor(.white)
                 .padding(.horizontal, 5)
                 .background(.black)
-                .onTapGesture {
-                    
-                }
             Button(action: {
                 // show alert to get input from user, then do whatever you want for the plus button
                 self.showingAlert.toggle()
@@ -117,18 +122,18 @@ struct LabelBtnView: View {
             }
             .disabled(plusBtnDisabled)
             .fullScreenCover(isPresented: $showingAlert) {
-                self.showingAlert.toggle()
             } content: {
-                OneInputAlertView(textEntered: $textEntered, showingAlert: $showingAlert, alertTitle: "Adding...", placeHolder: textFieldPlaceHolder, action: action)
+                switch alertType {
+                case .oneTextField:
+                    OneInputAlertView(textEntered: $textEntered, showingAlert: $showingAlert, alertTitle: "Adding...", placeHolder: textFieldPlaceHolder, action: action)
+                case .oneTextAndTimeSpan:
+                    oneInputAndTimeSpanAlertView(textEntered: $textEntered, showingAlert: $showingAlert, alertTitle: "Adding...", placeHolder: textFieldPlaceHolder, action: action)
+                }
             }
-
-
-            // should show another view
-            NavigationLink(destination: OneInputAlertView(textEntered: $textEntered, showingAlert: $showingAlert, alertTitle: label, placeHolder: textFieldPlaceHolder, action: action), isActive: $showingAlert){EmptyView()}
             if hasClear {
                 Button( action: {
                     // clear all contents
-
+                    
                 }) {
                     Image(systemName: "clear")
                         .padding(.trailing, 8)
@@ -189,10 +194,7 @@ struct twoRowDisplayView: View {
 /// showing some constrains needed to be filled for enabling the auto shifts arrange
 /// function
 ///
-/// - label: name of the view
-/// - hasClear: determine the view has a clear button or not
-/// - action: the function will be activated when the plus button is pressed
-/// - clear: clear all the data which is added by the plus button
+/// - l
 ///
 ///************************************************************
 struct constrainsView: View {
@@ -203,11 +205,17 @@ struct constrainsView: View {
     var body: some View {
         staffLimitsView(limits: dayLimits, limitLabel: "Daily HR limits:")
         ForEach(shifts, id: \.id) { shift in
-            staffLimitsView(limits: shiftsLimits[shift.id-1], limitLabel: "\(shift.name) shift HR limits:")
+            staffLimitsView(limits: shiftsLimits[shift.id], limitLabel: "\(shift.name) shift HR limits:")
         }
     }
 }
-
+///***********************************************************
+///
+/// this view will get HR limit from users
+///
+/// - l
+///
+///************************************************************
 struct staffLimitsView: View {
     @State  var limits: String
     var limitLabel: String

@@ -92,7 +92,7 @@ struct staffCardView: View {
                 }
                 .padding(.bottom, 10)
                 
-                LabelBtnView(label: "Skills", plusBtnDisabled: hasStore, hasClear: false, textFieldPlaceHolder: "Skill Name", action: profileViewModel.addSkill)
+                LabelBtnView(label: "Skills", plusBtnDisabled: hasStore, hasClear: false, textFieldPlaceHolder: "Skill Name", alertType: .oneTextField, action: profileViewModel.addSkill)
                 let jobs :[String] = ["roll1","roll1","roll1","roll1","roll1",
                     "roll1","roll1","roll1","roll1","roll1",
                                       "roll1","roll1","roll1","roll1","roll1",
@@ -100,7 +100,7 @@ struct staffCardView: View {
                 oneRowDisplayView(data: jobs)
                     .padding(.bottom)
                 
-                LabelBtnView(label: "Day Off", plusBtnDisabled: hasStore, hasClear: false, textFieldPlaceHolder: "day off", action: profileViewModel.addDayOff)
+                LabelBtnView(label: "Day Off", plusBtnDisabled: hasStore, hasClear: false, textFieldPlaceHolder: "day off", alertType: .oneTextAndTimeSpan, action: profileViewModel.addDayOff)
                 let dayOffs = [(1,"20/6", nil),(2,"23/6", "12pm~12pm")]
 
                 dayOffView(dayOffs: dayOffs)

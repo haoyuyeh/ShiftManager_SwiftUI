@@ -27,6 +27,7 @@ struct PersistenceController {
         if context.hasChanges {
             do {
                 try context.save()
+                print("saved")
                 completion(nil)
             }catch {
                 completion(error)

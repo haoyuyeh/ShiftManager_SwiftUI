@@ -4,21 +4,50 @@
 //
 //  Created by Hao Yu Yeh on 2022/7/7.
 //
-import SwiftUI
+import CoreData
 import Combine
 
+
 class SettingsViewModel: ObservableObject {
-    @Published var currentStore: Store? = nil
+    @Published var stores: [Store] = []
+    
+    var currentStore: Store? = nil
+    @Published var currentJobs: [Job] = []
+    @Published var currentShifts: [Shift] = []
     
     let persistenceController = PersistenceController.shared
+    var managedObjectContext = PersistenceController.shared.container.viewContext
     
-    @Environment(\.managedObjectContext) var managedObjectContext
     
-    @FetchRequest(entity: Store.entity(), sortDescriptors: [NSSortDescriptor(keyPath: \Store.name, ascending:   true)]) var stores: FetchedResults<Store>
-    
-    func setCurrentStore(index: Int) {
+    init() {
+        updateStoreLists()
+        if !stores.isEmpty {
+            updateCurrentStore(index: 0)
+        }
+    }
+    ///***********************************************************
+    ///
+    /// retrieve all store data from database
+    ///
+    ///************************************************************
+    func updateStoreLists() {
+        let storeFetch = Store.fetchRequest()
+        do {
+               let results = try managedObjectContext.fetch(storeFetch)
+               stores = results
+           } catch let error as NSError {
+               print("Fetch error: \(error) description: \(error.userInfo)")
+           }
+    }
+    ///***********************************************************
+    ///
+    ///
+    ///
+    ///************************************************************
+    func updateCurrentStore(index: Int) {
         self.currentStore = stores[index]
-        print(currentStore?.name ?? "nil")
+        currentJobs = currentStore?.jobs?.allObjects as! [Job]
+        currentShifts = currentStore?.shifts?.allObjects as! [Shift]
     }
     
     func addStore(storeName: String) {
@@ -26,47 +55,90 @@ class SettingsViewModel: ObservableObject {
         store.uuid = UUID()
         store.name = storeName
         persistenceController.save()
-        if currentStore == nil {
-            currentStore = store
-        }
-        print(storeName)
+        stores.append(store)
     }
     
     func addShift(info: String) {
-        
+        let shiftInfos = info.split(separator: ",")
+        let shift = Shift(context: managedObjectContext)
+        shift.uuid = UUID()
+        shift.belongTo = currentStore
+        shift.name = String(shiftInfos[0])
+        shift.start = TimeFormatter.shared.dateFormatter.date(from: String(shiftInfos[1]))
+        shift.end = TimeFormatter.shared.dateFormatter.date(from: String(shiftInfos[2]))
+        persistenceController.save()
+        currentShifts.append(shift)
     }
     
-    func addJob(info: String) {
-        
+    func addJob(jobName: String) {
+        let job = Job(context: managedObjectContext)
+        job.uuid = UUID()
+        job.name = jobName
+        job.belongTo = currentStore
+        persistenceController.save()
+        currentJobs.append(job)
     }
     
     func clear() {
        
     }
-    
+    ///***********************************************************
+    ///
+    /// checking if currently managing certain store
+    ///
+    ///************************************************************
     func hasStore() -> Bool {
-        return false
+        if currentStore == nil {
+            return false
+        }else {
+            return true
+        }
     }
     
     func getAllStores() -> [String] {
         var storesName :[String] = []
-        for store in stores {
-            storesName.append(store.name!)
+        if !stores.isEmpty {
+            for store in stores {
+                storesName.append(store.name!)
+            }
         }
-        print(storesName)
         return storesName
     }
-    
+    ///***********************************************************
+    ///
+    /// retrieve all jobs possessed by current store
+    ///
+    ///************************************************************
     func getAllJobs() -> [String] {
-        let jobs :[String] = ["roll1","roll1","roll1","roll1","roll1",
-                              "roll1","roll1","roll1","roll1","roll1",
-                              "roll1","roll1","roll1","roll1","roll1",
-                              "roll1","roll1","roll1","roll1","roll1"]
-        return jobs
+        var rJobs: [String] = []
+        if !currentJobs.isEmpty {
+            for job in currentJobs {
+                rJobs.append(job.name!)
+            }
+        }
+        return rJobs
     }
-    
+    ///***********************************************************
+    ///
+    /// retrieve all shifts possessed by current store
+    ///
+    ///************************************************************
     func getAllShifts() -> [(Int, String, String)] {
-        let shifts = [(1, "open", "7am~5pm"),(2, "close", "8am~8pm"),(3, "general", "8am~5pm")]
-        return shifts
+        var rShifts: [(Int, String, String)] = []
+        
+        var index = 0
+        var timeSpan = ""
+        var name = ""
+        
+        if !currentShifts.isEmpty {
+            for shift in currentShifts {
+                name = shift.name ?? ""
+                timeSpan = TimeFormatter.shared.getTimeString(date: shift.start!, timeStyle: .short) + " ~ " + TimeFormatter.shared.getTimeString(date: shift.end!, timeStyle: .short)
+                
+                rShifts.append((index, name, timeSpan))
+                index += 1
+            }
+        }
+        return rShifts
     }
 }
