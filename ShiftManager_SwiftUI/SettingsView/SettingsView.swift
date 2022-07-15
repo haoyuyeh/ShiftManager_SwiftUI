@@ -31,7 +31,7 @@ struct SettingsView: View {
             VStack(alignment: .leading, spacing: 1.0){
                 
                 // list all stores under managing
-                LabelBtnView(label: "Store", plusBtnDisabled: false, hasClear: false, textFieldPlaceHolder: "Store Name", alertType: .oneTextField, action: settingsViewModel.addStore)
+                LabelBtnView(label: "Store", plusBtnDisabled: false, hasClear: false, textFieldPlaceHolder: "Store Name", alertType: .inputText, action: settingsViewModel.addStore)
                 oneRowDisplayView(data: settingsViewModel.getAllStores())
                     .padding(.bottom)
                 
@@ -47,12 +47,12 @@ struct SettingsView: View {
                 }
                 
                 // list all available job positions
-                LabelBtnView(label: "Jobs", plusBtnDisabled: !settingsViewModel.hasStore(), hasClear: false, textFieldPlaceHolder: "Job Name", alertType: .oneTextField, action: settingsViewModel.addJob)
+                LabelBtnView(label: "Jobs", plusBtnDisabled: !settingsViewModel.hasStore(), hasClear: false, textFieldPlaceHolder: "Job Name", alertType: .inputText, action: settingsViewModel.addJob)
                 oneRowDisplayView(data: settingsViewModel.getAllJobs())
                     .padding(.bottom)
                 
                 // list all shifts
-                LabelBtnView(label: "Shifts", plusBtnDisabled: !settingsViewModel.hasStore(), hasClear: false, textFieldPlaceHolder: "Shift Name", alertType: .oneTextAndTimeSpan, action: settingsViewModel.addShift)
+                LabelBtnView(label: "Shifts", plusBtnDisabled: !settingsViewModel.hasStore(), hasClear: false, textFieldPlaceHolder: "Shift Name", alertType: .inputTextAndTimeSpan, action: settingsViewModel.addShift)
                 twoRowDisplayView(data: settingsViewModel.getAllShifts())
                     .padding(.bottom)
                 
@@ -124,10 +124,12 @@ struct LabelBtnView: View {
             .fullScreenCover(isPresented: $showingAlert) {
             } content: {
                 switch alertType {
-                case .oneTextField:
+                case .inputText:
                     OneInputAlertView(textEntered: $textEntered, showingAlert: $showingAlert, alertTitle: "Adding...", placeHolder: textFieldPlaceHolder, action: action)
-                case .oneTextAndTimeSpan:
+                case .inputTextAndTimeSpan:
                     oneInputAndTimeSpanAlertView(textEntered: $textEntered, showingAlert: $showingAlert, alertTitle: "Adding...", placeHolder: textFieldPlaceHolder, action: action)
+                default:
+                    Text("some unidentified alert type")
                 }
             }
             if hasClear {

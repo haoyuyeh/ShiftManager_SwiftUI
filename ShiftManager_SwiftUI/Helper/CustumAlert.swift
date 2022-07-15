@@ -8,22 +8,35 @@
 import SwiftUI
 
 enum AlertType {
-    case oneTextField
-    case oneTextAndTimeSpan
+    case showText
+    case inputText
+    case inputTextAndTimeSpan
+    case inputTextAndSelection
 }
 
-struct CustumAlert: View {
+struct ShowMsgAlertView: View {
+    @Binding var showingAlert: Bool
+    
+    var message: String
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        ZStack {
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Color.white)
+            VStack {
+                Text(message)
+                    .font(.title)
+                    .foregroundColor(.black)
+                
+                Button("OK") {
+                    self.showingAlert.toggle()
+                }
+                .frame(maxWidth: .infinity)
+            }
+        }
+        .frame(width: 300, height: 200)
     }
 }
-
-struct CustumAlert_Previews: PreviewProvider {
-    static var previews: some View {
-        CustumAlert()
-    }
-}
-
 
 struct OneInputAlertView: View {
     @Binding var textEntered: String
@@ -107,6 +120,65 @@ struct oneInputAndTimeSpanAlertView: View {
                     .foregroundColor(.red)
                     Button("OK") {
                         action(textEntered + "," + TimeFormatter.shared.getTimeString(date: currnetStartDate, timeStyle: .short) + "," +  TimeFormatter.shared.getTimeString(date: currnetEndDate, timeStyle: .short))
+                        self.showingAlert.toggle()
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+                .frame(maxWidth: .infinity)
+            }
+        }
+        .frame(width: 300, height: 200)
+    }
+}
+
+struct OneInputAndSelectionAlertView: View {
+    @Binding var showingAlert: Bool
+    
+    var alertTitle: String
+    var placeHolder: String
+    @State var textEntered: String = ""
+    @State var selection: Int = 0
+    var optionName: String
+    var options: [String]
+    @State private var unprocessedMsg: String = ""
+    var action:(String)->()
+    
+    
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Color.white)
+            VStack {
+                Text(alertTitle)
+                    .font(.title)
+                    .foregroundColor(.black)
+                
+                TextField(placeHolder, text: $textEntered)
+                    .padding(5)
+                    .background(Color.gray.opacity(0.2))
+                    .foregroundColor(.black)
+                    .padding(.horizontal, 20)
+                
+                // choosing which store you want to manage
+                Picker(selection: $selection, label: Text(optionName)) {
+                    ForEach(0..<options.count, id:\.self) {
+                        Text(options[$0])
+                    }
+                }
+                .pickerStyle(.menu)
+                .onChange(of: selection) { _ in
+                    unprocessedMsg = textEntered + "," + options[selection]
+                }
+                
+                HStack{
+                    Button("Cancel") {
+                        textEntered = ""
+                        self.showingAlert.toggle()
+                    }
+                    .frame(maxWidth: .infinity)
+                    .foregroundColor(.red)
+                    Button("OK") {
+                        action(unprocessedMsg)
                         self.showingAlert.toggle()
                     }
                     .frame(maxWidth: .infinity)

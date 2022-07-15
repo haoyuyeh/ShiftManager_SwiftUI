@@ -11,8 +11,11 @@ struct ProfileView: View {
     var weekHourLimits = ""
     @StateObject  var profileViewModel = ProfileViewModel()
     
+    @State private var currentStaff = 0
     @State private var hasStore = false
-   
+    @State private var storeSelection = 0
+    @State private var showingAlert = false
+    
     var body: some View {
         
         VStack{
@@ -23,7 +26,8 @@ struct ProfileView: View {
                     .font(.largeTitle)
                 Spacer()
                 Button(action: {
-                    
+                    // input staff name and the store he belongs to
+                    showingAlert.toggle()
                 }){
                     Image(systemName: "person.fill.badge.plus")
                         .resizable()
@@ -31,16 +35,21 @@ struct ProfileView: View {
                         .aspectRatio(contentMode: .fill)
                 }
                 .padding([.top, .bottom, .trailing], 10)
+                .fullScreenCover(isPresented: $showingAlert) {
+                } content: {
+                    OneInputAndSelectionAlertView(showingAlert: $showingAlert, alertTitle: "Adding...", placeHolder: "Staff's name", optionName: "Belong to", options: profileViewModel.getAllStores(), action: profileViewModel.addStaff)
+                }
+
             }
             
             
             GeometryReader{g in
                 ZStack{
-                    staffCardView(profileViewModel: profileViewModel, staffName: "", bgColor: .black, weekHourLimits: weekHourLimits, hasStore: true, isEmpty: true)
+                    staffCardView(profileViewModel: profileViewModel, staff: nil, bgColor: .black, weekHourLimits: weekHourLimits, hasStore: true, isEmpty: true)
                         .position(x: g.size.width*0.6, y: g.size.height*0.7)
                         .offset(x: 40, y: -60)
                     
-                    staffCardView(profileViewModel: profileViewModel, staffName: "", bgColor: .gray, weekHourLimits: weekHourLimits, hasStore: true, isEmpty: true)
+                    staffCardView(profileViewModel: profileViewModel, staff: nil, bgColor: .gray, weekHourLimits: weekHourLimits, hasStore: true, isEmpty: true)
                         .position(x: g.size.width*0.6, y: g.size.height*0.7)
                         .offset(x: 20, y: -30)
                     staffCardView(profileViewModel: profileViewModel, staffName: "Angus", bgColor: .red, weekHourLimits: weekHourLimits, hasStore: true, isEmpty: false)
@@ -55,20 +64,19 @@ struct ProfileView: View {
 struct staffCardView: View {
     @ObservedObject var profileViewModel: ProfileViewModel
     
-    var staffName: String
+    var staff: Staff?
     var bgColor: Color
     @State var weekHourLimits: String
     var hasStore: Bool
-    var isEmpty: Bool
     
     var body: some View {
         
         GeometryReader{ geometry in
-            if !isEmpty {
+            if let staff = staff {
                 VStack(alignment: .leading, spacing: 1) {
                     HStack{
                         Spacer()
-                        Text(staffName)
+                        Text(staff.name!)
                              .bold()
                              .font(.largeTitle)
                              .padding([.top, .bottom], 20)
@@ -93,7 +101,7 @@ struct staffCardView: View {
                     }
                     .padding(.bottom, 10)
                     
-                    LabelBtnView(label: "Skills", plusBtnDisabled: !hasStore, hasClear: false, textFieldPlaceHolder: "Skill Name", alertType: .oneTextField, action: profileViewModel.addSkill)
+                    LabelBtnView(label: "Skills", plusBtnDisabled: !hasStore, hasClear: false, textFieldPlaceHolder: "Skill Name", alertType: .inputText, action: profileViewModel.addSkill)
                     let jobs :[String] = ["roll1","roll1","roll1","roll1","roll1",
                         "roll1","roll1","roll1","roll1","roll1",
                                           "roll1","roll1","roll1","roll1","roll1",
@@ -101,7 +109,7 @@ struct staffCardView: View {
                     oneRowDisplayView(data: jobs)
                         .padding(.bottom)
                     
-                    LabelBtnView(label: "Day Off", plusBtnDisabled: !hasStore, hasClear: false, textFieldPlaceHolder: "day off", alertType: .oneTextAndTimeSpan, action: profileViewModel.addDayOff)
+                    LabelBtnView(label: "Day Off", plusBtnDisabled: !hasStore, hasClear: false, textFieldPlaceHolder: "day off", alertType: .inputTextAndTimeSpan, action: profileViewModel.addDayOff)
                     let dayOffs = [(1,"20/6", nil),(2,"23/6", "12pm~12pm")]
 
                     dayOffView(dayOffs: dayOffs)
