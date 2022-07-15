@@ -36,14 +36,14 @@ struct ProfileView: View {
             
             GeometryReader{g in
                 ZStack{
-                    staffCardView(profileViewModel: profileViewModel, staffName: "", bgColor: .black, weekHourLimits: weekHourLimits, hasStore: true)
+                    staffCardView(profileViewModel: profileViewModel, staffName: "", bgColor: .black, weekHourLimits: weekHourLimits, hasStore: true, isEmpty: true)
                         .position(x: g.size.width*0.6, y: g.size.height*0.7)
                         .offset(x: 40, y: -60)
                     
-                    staffCardView(profileViewModel: profileViewModel, staffName: "", bgColor: .green, weekHourLimits: weekHourLimits, hasStore: true)
+                    staffCardView(profileViewModel: profileViewModel, staffName: "", bgColor: .gray, weekHourLimits: weekHourLimits, hasStore: true, isEmpty: true)
                         .position(x: g.size.width*0.6, y: g.size.height*0.7)
                         .offset(x: 20, y: -30)
-                    staffCardView(profileViewModel: profileViewModel, staffName: "Angus", bgColor: .red, weekHourLimits: weekHourLimits, hasStore: true)
+                    staffCardView(profileViewModel: profileViewModel, staffName: "Angus", bgColor: .red, weekHourLimits: weekHourLimits, hasStore: true, isEmpty: false)
                         .position(x: g.size.width*0.6, y: g.size.height*0.7)
                     
                 }
@@ -59,56 +59,62 @@ struct staffCardView: View {
     var bgColor: Color
     @State var weekHourLimits: String
     var hasStore: Bool
-    
+    var isEmpty: Bool
     
     var body: some View {
         
         GeometryReader{ geometry in
-            VStack(alignment: .leading, spacing: 1) {
-                HStack{
-                    Spacer()
-                    Text(staffName)
-                         .bold()
-                         .font(.largeTitle)
-                         .padding([.top, .bottom], 20)
-                    Spacer()
-                }
+            if !isEmpty {
+                VStack(alignment: .leading, spacing: 1) {
+                    HStack{
+                        Spacer()
+                        Text(staffName)
+                             .bold()
+                             .font(.largeTitle)
+                             .padding([.top, .bottom], 20)
+                        Spacer()
+                    }
+                        
                     
-                
-               
-                
-                HStack {
-                    Text("Weekly Hour Limits:")
-                        .font(.body)
-                        .padding(.leading, 5)
-                    TextField("Input Numbers Only", text: $weekHourLimits)
-                        .padding(.leading, 5)
-                        .border(.black)
-                        .onChange(of: weekHourLimits) { newValue in
-                            if newValue.range(of: "^[0-9]+$", options: .regularExpression) == nil {
-                                weekHourLimits = ""
+                   
+                    
+                    HStack {
+                        Text("Weekly Hour Limits:")
+                            .font(.body)
+                            .padding(.leading, 5)
+                        TextField("Input Numbers Only", text: $weekHourLimits)
+                            .padding(.leading, 5)
+                            .border(.black)
+                            .onChange(of: weekHourLimits) { newValue in
+                                if newValue.range(of: "^[0-9]+$", options: .regularExpression) == nil {
+                                    weekHourLimits = ""
+                                }
                             }
-                        }
-                }
-                .padding(.bottom, 10)
-                
-                LabelBtnView(label: "Skills", plusBtnDisabled: hasStore, hasClear: false, textFieldPlaceHolder: "Skill Name", alertType: .oneTextField, action: profileViewModel.addSkill)
-                let jobs :[String] = ["roll1","roll1","roll1","roll1","roll1",
-                    "roll1","roll1","roll1","roll1","roll1",
-                                      "roll1","roll1","roll1","roll1","roll1",
-                                      "roll1","roll1","roll1","roll1","roll1"]
-                oneRowDisplayView(data: jobs)
-                    .padding(.bottom)
-                
-                LabelBtnView(label: "Day Off", plusBtnDisabled: hasStore, hasClear: false, textFieldPlaceHolder: "day off", alertType: .oneTextAndTimeSpan, action: profileViewModel.addDayOff)
-                let dayOffs = [(1,"20/6", nil),(2,"23/6", "12pm~12pm")]
+                    }
+                    .padding(.bottom, 10)
+                    
+                    LabelBtnView(label: "Skills", plusBtnDisabled: !hasStore, hasClear: false, textFieldPlaceHolder: "Skill Name", alertType: .oneTextField, action: profileViewModel.addSkill)
+                    let jobs :[String] = ["roll1","roll1","roll1","roll1","roll1",
+                        "roll1","roll1","roll1","roll1","roll1",
+                                          "roll1","roll1","roll1","roll1","roll1",
+                                          "roll1","roll1","roll1","roll1","roll1"]
+                    oneRowDisplayView(data: jobs)
+                        .padding(.bottom)
+                    
+                    LabelBtnView(label: "Day Off", plusBtnDisabled: !hasStore, hasClear: false, textFieldPlaceHolder: "day off", alertType: .oneTextAndTimeSpan, action: profileViewModel.addDayOff)
+                    let dayOffs = [(1,"20/6", nil),(2,"23/6", "12pm~12pm")]
 
-                dayOffView(dayOffs: dayOffs)
+                    dayOffView(dayOffs: dayOffs)
+                }
+                .frame(maxWidth: geometry.size.width*0.7, maxHeight: geometry.size.height*0.6, alignment: .topLeading)
+                .background(bgColor)
+                .cornerRadius(20)
+            }else {
+                Text("")
+                    .frame(maxWidth: geometry.size.width*0.7, maxHeight: geometry.size.height*0.6, alignment: .topLeading)
+                    .background(bgColor)
+                    .cornerRadius(20)
             }
-            .frame(maxWidth: geometry.size.width*0.7, maxHeight: geometry.size.height*0.6, alignment: .topLeading)
-            .background(bgColor)
-            .cornerRadius(20)
-            
         }
         
     }
