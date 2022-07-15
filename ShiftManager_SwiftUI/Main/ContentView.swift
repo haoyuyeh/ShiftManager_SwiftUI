@@ -10,20 +10,20 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         TabView(){
-            ShiftManageView()
+            SettingsView()
                 .tabItem {
-                    Image(systemName: "wrench")
-                    Text("Shift")
+                    Image(systemName: "gearshape")
+                    Text("Settings")
                 }
             ProfileView()
                 .tabItem {
                     Image(systemName: "person")
                     Text("Staffs")
                 }
-            SettingsView()
+            ShiftManageView()
                 .tabItem {
-                    Image(systemName: "gearshape")
-                    Text("Settings")
+                    Image(systemName: "wrench")
+                    Text("Shift")
                 }
         }
     }
