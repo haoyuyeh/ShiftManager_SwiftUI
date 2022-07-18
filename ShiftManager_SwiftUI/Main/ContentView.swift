@@ -8,23 +8,28 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var tabSelection = 0
+    
     var body: some View {
-        TabView(){
-            SettingsView()
+        TabView(selection: $tabSelection){
+            SettingsView(tabSelection: $tabSelection)
                 .tabItem {
                     Image(systemName: "gearshape")
                     Text("Settings")
                 }
-            ProfileView()
+                .tag(0)
+            ProfileView(tabSelection: $tabSelection)
                 .tabItem {
                     Image(systemName: "person")
                     Text("Staffs")
                 }
-            ShiftManageView()
+                .tag(1)
+            ShiftManageView(tabSelection: $tabSelection)
                 .tabItem {
                     Image(systemName: "wrench")
                     Text("Shift")
                 }
+                .tag(2)
         }
     }
 }

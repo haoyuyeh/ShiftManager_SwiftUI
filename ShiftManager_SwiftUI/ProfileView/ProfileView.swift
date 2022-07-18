@@ -8,26 +8,35 @@
 import SwiftUI
 
 struct ProfileView: View {
+    @Binding var tabSelection: Int
     @StateObject  var profileViewModel = ProfileViewModel()
-    
+    @State private var storeSelection = 0
+
     var body: some View {
         switch profileViewModel.profileViewState {
         case .noStore:
             Text("Adding a store first!!!")
                 .font(.largeTitle)
                 .foregroundColor(.red)
+            /************************
+             因為根據有沒有員工來顯示不同的view，因此當從有員工的店轉換到沒有員工的店時，因為currentStore改變了所以view需要更新，
+             但是目前StaffView還是alive所以會先更新它。因此在StaffCardView的時候要先處理沒有員工的時候需要顯示的畫面。
+             詳細原因可以參考下列網頁
+             https://www.hackingwithswift.com/forums/swiftui/child-view-seems-to-update-before-parent-view-can-anybody-explain-why/9259
+             **/
         case .noStaff:
             VStack{
-                HeaderView(viewModel: profileViewModel)
+                HeaderView(viewModel: profileViewModel, storeSelection: $storeSelection)
                 Spacer()
                 Text("Adding a staff first!!!")
                     .font(.largeTitle)
                     .foregroundColor(.red)
                 Spacer()
             }
+            
         case .greenLight:
             VStack{
-                HeaderView(viewModel: profileViewModel)
+                HeaderView(viewModel: profileViewModel, storeSelection: $storeSelection)
                 StaffsView(viewModel: profileViewModel)
             }
         }
@@ -36,7 +45,7 @@ struct ProfileView: View {
 
 struct HeaderView: View {
     @ObservedObject var viewModel: ProfileViewModel
-    @State private var storeSelection = 0
+    @Binding  var storeSelection: Int
     @State private var showingAlert = false
     var body: some View {
         HStack{
@@ -68,7 +77,6 @@ struct HeaderView: View {
             .fullScreenCover(isPresented: $showingAlert) {
             } content: {
                 OneInputAlertView(showingAlert: $showingAlert, alertTitle: "Adding...", placeHolder: "Staff's name", action: viewModel.addStaff)
-//                OneInputAndSelectionAlertView(showingAlert: $showingAlert, alertTitle: "Adding...", placeHolder: "Staff's name", optionName: "Belong to", options: viewModel.getAllStores(), action: viewModel.addStaff)
             }
             
         }
@@ -121,9 +129,6 @@ struct staffCardView: View {
                             .padding([.top, .bottom], 20)
                         Spacer()
                     }
-                    
-                    
-                    
                     
                     HStack {
                         Text("Weekly Hour Limits:")
@@ -199,9 +204,10 @@ struct dayOffView: View {
         }
     }
 }
-
-struct ProfileView_Previews: PreviewProvider {
-    static var previews: some View {
-        ProfileView()
-    }
-}
+//
+//struct ProfileView_Previews: PreviewProvider {
+//    @State var tab = 0
+//    static var previews: some View {
+//        ProfileView(tabSelection: $tab)
+//    }
+//}

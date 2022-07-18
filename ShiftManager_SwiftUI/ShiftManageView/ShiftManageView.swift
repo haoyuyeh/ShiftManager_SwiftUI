@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ShiftManageView: View {
+    @Binding var tabSelection: Int
+    
     var body: some View {
         GeometryReader{ geo in
             VStack{
@@ -100,8 +102,8 @@ struct staffRow: View {
     }
 }
 
-struct ShiftManageView_Previews: PreviewProvider {
-    static var previews: some View {
-        ShiftManageView()
-    }
-}
+//struct ShiftManageView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ShiftManageView()
+//    }
+//}

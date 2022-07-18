@@ -14,8 +14,8 @@ enum ProfileViewState {
 }
 
 class ProfileViewModel: ObservableObject {
-    @Published var currentStore: Store? = nil
     @Published var profileViewState: ProfileViewState = .noStore
+    private var currentStore: Store? = nil
     
     let persistenceController = PersistenceController.shared
     var managedObjectContext = PersistenceController.shared.container.viewContext
@@ -28,6 +28,9 @@ class ProfileViewModel: ObservableObject {
     
     init() {
         updateStoreLists()
+        if !stores.isEmpty {
+            updateCurrentStore(index: 0)
+        }
         checkProfileViewState()
     }
     
@@ -53,10 +56,10 @@ class ProfileViewModel: ObservableObject {
             let results = try managedObjectContext.fetch(storeFetch)
             stores = results
             if !stores.isEmpty{
+                storesName = []
                 for store in stores {
                     storesName.append(store.name!)
                 }
-                updateCurrentStore(index: 0)
             }
         } catch let error as NSError {
             print("Fetch error: \(error) description: \(error.userInfo)")
@@ -71,18 +74,28 @@ class ProfileViewModel: ObservableObject {
         }
         jobs = currentStore?.jobs?.allObjects as! [Job]
         shifts = currentStore?.shifts?.allObjects as! [Shift]
+        checkProfileViewState()
     }
     
     func getAllStores() -> [String] {
         return storesName
     }
     
-    func getStaff(index: Int) -> Staff {
-        return staffs[getCorrectStaffBoundary(index: index)]
+    func getStaff(index: Int) -> Staff? {
+        if let index = getCorrectStaffBoundary(index: index) {
+            return staffs[index]
+        }else {
+            return nil
+        }
     }
     
-    func getCorrectStaffBoundary(index: Int) -> Int {
-        return index % staffs.count
+    func getCorrectStaffBoundary(index: Int) -> Int? {
+        if staffs.count == 0 {
+            return nil
+        }else {
+            return index % staffs.count
+
+        }
     }
     
     func addStaff(info: String) {

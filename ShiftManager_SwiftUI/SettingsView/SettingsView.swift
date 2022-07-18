@@ -11,6 +11,7 @@ import Combine
 
 
 struct SettingsView: View {
+    @Binding var tabSelection: Int
     @StateObject var settingsViewModel = SettingsViewModel()
     
     @State private var storeSelection = 0
@@ -238,8 +239,8 @@ struct staffLimitsView: View {
     }
 }
 
-struct SettingsView_Previews: PreviewProvider {
-    static var previews: some View {
-        SettingsView()
-    }
-}
+//struct SettingsView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        SettingsView()
+//    }
+//}
