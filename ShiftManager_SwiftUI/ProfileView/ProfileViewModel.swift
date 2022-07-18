@@ -14,13 +14,13 @@ enum ProfileViewState {
 }
 
 class ProfileViewModel: ObservableObject {
-    @Published var stores: [Store] = []
+    @Published var currentStore: Store? = nil
     @Published var profileViewState: ProfileViewState = .noStore
     
     let persistenceController = PersistenceController.shared
     var managedObjectContext = PersistenceController.shared.container.viewContext
     
-    private var currentStore: Store? = nil
+    private var stores: [Store] = []
     private var storesName: [String] = []
     private var staffs: [Staff] = []
     private var jobs: [Job] = []
@@ -66,6 +66,9 @@ class ProfileViewModel: ObservableObject {
     func updateCurrentStore(index: Int) {
         currentStore = stores[index]
         staffs = currentStore?.employees?.allObjects as! [Staff]
+        for staff in staffs {
+            print("\(String(describing: currentStore?.name))" + "-" + "\(String(describing: staff.name))")
+        }
         jobs = currentStore?.jobs?.allObjects as! [Job]
         shifts = currentStore?.shifts?.allObjects as! [Shift]
     }
@@ -75,21 +78,7 @@ class ProfileViewModel: ObservableObject {
     }
     
     func getStaff(index: Int) -> Staff {
-        switch index {
-        case 0...:
-            if staffs.isEmpty {
-                let nilStaff = Staff(context: persistenceController.container.viewContext)
-                nilStaff.name = "Adding Staff first!!!"
-                return nilStaff
-            }else {
-                return staffs[getCorrectStaffBoundary(index: index)]
-            }
-        default:
-            let nilStore = Staff(context: persistenceController.container.viewContext)
-            nilStore.name = "Adding Store first!!!"
-            return nilStore
-        }
-        
+        return staffs[getCorrectStaffBoundary(index: index)]
     }
     
     func getCorrectStaffBoundary(index: Int) -> Int {
@@ -97,7 +86,13 @@ class ProfileViewModel: ObservableObject {
     }
     
     func addStaff(info: String) {
-        
+        let staff = Staff(context: persistenceController.container.viewContext)
+        staff.uuid = UUID()
+        staff.name = info
+        staff.employedBy = currentStore
+        staffs = currentStore?.employees?.allObjects as! [Staff]
+        persistenceController.save()
+        checkProfileViewState()
     }
     
     func addSkill(info: String) {

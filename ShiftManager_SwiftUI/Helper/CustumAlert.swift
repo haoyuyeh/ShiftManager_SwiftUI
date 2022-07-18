@@ -39,7 +39,7 @@ struct ShowMsgAlertView: View {
 }
 
 struct OneInputAlertView: View {
-    @Binding var textEntered: String
+    @State var textEntered: String = ""
     @Binding var showingAlert: Bool
     
     var alertTitle: String
@@ -84,7 +84,7 @@ struct OneInputAlertView: View {
 }
 
 struct oneInputAndTimeSpanAlertView: View {
-    @Binding var textEntered: String
+    @State var textEntered: String = ""
     @Binding var showingAlert: Bool
     
     var alertTitle: String
@@ -167,7 +167,7 @@ struct OneInputAndSelectionAlertView: View {
                 }
                 .pickerStyle(.menu)
                 .onChange(of: selection) { _ in
-                    unprocessedMsg = textEntered + "," + options[selection]
+                    unprocessedMsg = textEntered + "," + String(selection)
                 }
                 
                 HStack{

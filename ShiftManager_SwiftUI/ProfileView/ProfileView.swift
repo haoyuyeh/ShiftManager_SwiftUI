@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-
-
 struct ProfileView: View {
     @StateObject  var profileViewModel = ProfileViewModel()
     
@@ -69,7 +67,8 @@ struct HeaderView: View {
             .padding([.top, .bottom, .trailing], 10)
             .fullScreenCover(isPresented: $showingAlert) {
             } content: {
-                OneInputAndSelectionAlertView(showingAlert: $showingAlert, alertTitle: "Adding...", placeHolder: "Staff's name", optionName: "Belong to", options: viewModel.getAllStores(), action: viewModel.addStaff)
+                OneInputAlertView(showingAlert: $showingAlert, alertTitle: "Adding...", placeHolder: "Staff's name", action: viewModel.addStaff)
+//                OneInputAndSelectionAlertView(showingAlert: $showingAlert, alertTitle: "Adding...", placeHolder: "Staff's name", optionName: "Belong to", options: viewModel.getAllStores(), action: viewModel.addStaff)
             }
             
         }

@@ -100,7 +100,7 @@ struct LabelBtnView: View {
     var alertType: AlertType
     var action: (String) -> Void
     
-    @State private var textEntered = ""
+//    @State private var textEntered = ""
     @State private var showingAlert = false
     
 
@@ -115,7 +115,7 @@ struct LabelBtnView: View {
             Button(action: {
                 // show alert to get input from user, then do whatever you want for the plus button
                 self.showingAlert.toggle()
-                self.textEntered = ""
+//                self.textEntered = ""
             }){
                 Image(systemName: "plus")
                     .padding(.trailing, 8)
@@ -125,9 +125,9 @@ struct LabelBtnView: View {
             } content: {
                 switch alertType {
                 case .inputText:
-                    OneInputAlertView(textEntered: $textEntered, showingAlert: $showingAlert, alertTitle: "Adding...", placeHolder: textFieldPlaceHolder, action: action)
+                    OneInputAlertView(showingAlert: $showingAlert, alertTitle: "Adding...", placeHolder: textFieldPlaceHolder, action: action)
                 case .inputTextAndTimeSpan:
-                    oneInputAndTimeSpanAlertView(textEntered: $textEntered, showingAlert: $showingAlert, alertTitle: "Adding...", placeHolder: textFieldPlaceHolder, action: action)
+                    oneInputAndTimeSpanAlertView(showingAlert: $showingAlert, alertTitle: "Adding...", placeHolder: textFieldPlaceHolder, action: action)
                 default:
                     Text("some unidentified alert type")
                 }
