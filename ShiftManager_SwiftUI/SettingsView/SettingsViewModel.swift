@@ -32,6 +32,7 @@ class SettingsViewModel: ObservableObject {
     ///************************************************************
     func updateStoreLists() {
         let storeFetch = Store.fetchRequest()
+        storeFetch.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
         do {
                let results = try managedObjectContext.fetch(storeFetch)
                stores = results

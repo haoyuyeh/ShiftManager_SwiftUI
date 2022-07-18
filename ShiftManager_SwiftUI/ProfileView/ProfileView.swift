@@ -7,67 +7,107 @@
 
 import SwiftUI
 
+
+
 struct ProfileView: View {
-    var weekHourLimits = ""
     @StateObject  var profileViewModel = ProfileViewModel()
     
-    @State private var currentStaff = 0
-    @State private var hasStore = false
+    var body: some View {
+        switch profileViewModel.profileViewState {
+        case .noStore:
+            Text("Adding a store first!!!")
+                .font(.largeTitle)
+                .foregroundColor(.red)
+        case .noStaff:
+            VStack{
+                HeaderView(viewModel: profileViewModel)
+                Spacer()
+                Text("Adding a staff first!!!")
+                    .font(.largeTitle)
+                    .foregroundColor(.red)
+                Spacer()
+            }
+        case .greenLight:
+            VStack{
+                HeaderView(viewModel: profileViewModel)
+                StaffsView(viewModel: profileViewModel)
+            }
+        }
+    }
+}
+
+struct HeaderView: View {
+    @ObservedObject var viewModel: ProfileViewModel
     @State private var storeSelection = 0
     @State private var showingAlert = false
-    
     var body: some View {
-        
-        VStack{
-            HStack{
-                Spacer()
-                Text("Profile")
-                    .bold()
-                    .font(.largeTitle)
-                Spacer()
-                Button(action: {
-                    // input staff name and the store he belongs to
-                    showingAlert.toggle()
-                }){
-                    Image(systemName: "person.fill.badge.plus")
-                        .resizable()
-                        .frame(width: 30, height: 30)
-                        .aspectRatio(contentMode: .fill)
+        HStack{
+            Picker(selection: $storeSelection, label: Text("Store")) {
+                ForEach(0..<viewModel.getAllStores().count, id:\.self) {
+                    Text(viewModel.getAllStores()[$0])
                 }
-                .padding([.top, .bottom, .trailing], 10)
-                .fullScreenCover(isPresented: $showingAlert) {
-                } content: {
-                    OneInputAndSelectionAlertView(showingAlert: $showingAlert, alertTitle: "Adding...", placeHolder: "Staff's name", optionName: "Belong to", options: profileViewModel.getAllStores(), action: profileViewModel.addStaff)
-                }
-
+            }
+            .pickerStyle(.menu)
+            .onChange(of: storeSelection) { newValue in
+                viewModel.updateCurrentStore(index: storeSelection)
+            }
+            .padding(.leading, 10)
+            Spacer()
+            Text("Profile")
+                .bold()
+                .font(.largeTitle)
+            Spacer()
+            Button(action: {
+                // input staff name and the store he belongs to
+                showingAlert.toggle()
+            }){
+                Image(systemName: "person.fill.badge.plus")
+                    .resizable()
+                    .frame(width: 30, height: 30)
+                    .aspectRatio(contentMode: .fill)
+            }
+            .padding([.top, .bottom, .trailing], 10)
+            .fullScreenCover(isPresented: $showingAlert) {
+            } content: {
+                OneInputAndSelectionAlertView(showingAlert: $showingAlert, alertTitle: "Adding...", placeHolder: "Staff's name", optionName: "Belong to", options: viewModel.getAllStores(), action: viewModel.addStaff)
             }
             
-            
+        }
+    }
+}
+
+struct StaffsView: View {
+    @ObservedObject var viewModel: ProfileViewModel
+
+    @State private var currentStaff = 0
+    
+    var body: some View {
+        VStack{
             GeometryReader{g in
                 ZStack{
-                    staffCardView(profileViewModel: profileViewModel, staff: nil, bgColor: .black, weekHourLimits: weekHourLimits, hasStore: true, isEmpty: true)
+                    staffCardView(profileViewModel: viewModel, staff: nil, bgColor: .black)
                         .position(x: g.size.width*0.6, y: g.size.height*0.7)
                         .offset(x: 40, y: -60)
                     
-                    staffCardView(profileViewModel: profileViewModel, staff: nil, bgColor: .gray, weekHourLimits: weekHourLimits, hasStore: true, isEmpty: true)
+                    staffCardView(profileViewModel: viewModel, staff: nil, bgColor: .gray)
                         .position(x: g.size.width*0.6, y: g.size.height*0.7)
                         .offset(x: 20, y: -30)
-                    staffCardView(profileViewModel: profileViewModel, staffName: "Angus", bgColor: .red, weekHourLimits: weekHourLimits, hasStore: true, isEmpty: false)
-                        .position(x: g.size.width*0.6, y: g.size.height*0.7)
                     
+                    staffCardView(profileViewModel: viewModel, staff: viewModel.getStaff(index: currentStaff), bgColor: .red)
+                        .position(x: g.size.width*0.6, y: g.size.height*0.7)
                 }
             }
         }
     }
 }
 
+
 struct staffCardView: View {
     @ObservedObject var profileViewModel: ProfileViewModel
     
     var staff: Staff?
     var bgColor: Color
-    @State var weekHourLimits: String
-    var hasStore: Bool
+    @State var weekHourLimits: String = ""
     
     var body: some View {
         
@@ -77,14 +117,14 @@ struct staffCardView: View {
                     HStack{
                         Spacer()
                         Text(staff.name!)
-                             .bold()
-                             .font(.largeTitle)
-                             .padding([.top, .bottom], 20)
+                            .bold()
+                            .font(.largeTitle)
+                            .padding([.top, .bottom], 20)
                         Spacer()
                     }
-                        
                     
-                   
+                    
+                    
                     
                     HStack {
                         Text("Weekly Hour Limits:")
@@ -101,17 +141,17 @@ struct staffCardView: View {
                     }
                     .padding(.bottom, 10)
                     
-                    LabelBtnView(label: "Skills", plusBtnDisabled: !hasStore, hasClear: false, textFieldPlaceHolder: "Skill Name", alertType: .inputText, action: profileViewModel.addSkill)
+                    LabelBtnView(label: "Skills", plusBtnDisabled: false, hasClear: false, textFieldPlaceHolder: "Skill Name", alertType: .inputText, action: profileViewModel.addSkill)
                     let jobs :[String] = ["roll1","roll1","roll1","roll1","roll1",
-                        "roll1","roll1","roll1","roll1","roll1",
+                                          "roll1","roll1","roll1","roll1","roll1",
                                           "roll1","roll1","roll1","roll1","roll1",
                                           "roll1","roll1","roll1","roll1","roll1"]
                     oneRowDisplayView(data: jobs)
                         .padding(.bottom)
                     
-                    LabelBtnView(label: "Day Off", plusBtnDisabled: !hasStore, hasClear: false, textFieldPlaceHolder: "day off", alertType: .inputTextAndTimeSpan, action: profileViewModel.addDayOff)
+                    LabelBtnView(label: "Day Off", plusBtnDisabled: false, hasClear: false, textFieldPlaceHolder: "day off", alertType: .inputTextAndTimeSpan, action: profileViewModel.addDayOff)
                     let dayOffs = [(1,"20/6", nil),(2,"23/6", "12pm~12pm")]
-
+                    
                     dayOffView(dayOffs: dayOffs)
                 }
                 .frame(maxWidth: geometry.size.width*0.7, maxHeight: geometry.size.height*0.6, alignment: .topLeading)
@@ -127,6 +167,15 @@ struct staffCardView: View {
         
     }
 }
+
+//struct multipleSelectionView: View {
+//    var options: [String]
+//
+//    var body: some View {
+//
+//    }
+//}
+
 
 struct dayOffView: View {
     var dayOffs: [(id: Int, date: String, time: String?)]
@@ -144,7 +193,7 @@ struct dayOffView: View {
                     .frame(width: 100, height: 40)
                     .padding()
                     .border(.black)
-//                    Divider()
+                    //                    Divider()
                 }
                 Spacer()
             }
