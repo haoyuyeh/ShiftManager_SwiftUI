@@ -19,6 +19,10 @@ struct ProfileView: View {
                 .font(.largeTitle)
                 .foregroundColor(.red)
             /************************
+             when you change the currentStore to a store without staffs under showing the StaffView, the swiftui will update all the alive view related to the currentStore.
+             in this case, the current alive view would be StaffCardView. when swiftui update alive views, the app will crash due to trying to show the staff which is nil.
+             therefore, it has to be taken care of the getStaff function in ProfileViewModel and the StaffCardView in Profile View(need to take no staff into consideration).
+             the thorough explanation can be found on the webpage below.
              因為根據有沒有員工來顯示不同的view，因此當從有員工的店轉換到沒有員工的店時，因為currentStore改變了所以view需要更新，
              但是目前StaffView還是alive所以會先更新它。因此在StaffCardView的時候要先處理沒有員工的時候需要顯示的畫面。
              詳細原因可以參考下列網頁
@@ -102,6 +106,19 @@ struct StaffsView: View {
                     
                     staffCardView(profileViewModel: viewModel, staff: viewModel.getStaff(index: currentStaff), bgColor: .red)
                         .position(x: g.size.width*0.6, y: g.size.height*0.7)
+                        .gesture(DragGesture(minimumDistance: 3.0, coordinateSpace: .local).onEnded({ value in
+                            switch GestureDirection.shared.getDragDirection(translation: value.translation) {
+                                
+                            case Direction.left:
+                                currentStaff += 1
+                            case Direction.right:
+                                currentStaff -= 1
+                            case Direction.up, Direction.down:
+                                viewModel.deleteStaff(index: currentStaff)
+                            default:
+                                print("")
+                            }
+                        }))
                 }
             }
         }

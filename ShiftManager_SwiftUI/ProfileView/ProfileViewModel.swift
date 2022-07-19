@@ -89,11 +89,20 @@ class ProfileViewModel: ObservableObject {
         }
     }
     
+    func deleteStaff(index: Int) {
+        if let index = getCorrectStaffBoundary(index: index) {
+            persistenceController.delete(staffs[index])
+            persistenceController.save()
+            staffs.remove(at: index)
+            checkProfileViewState()
+        }
+    }
+    
     func getCorrectStaffBoundary(index: Int) -> Int? {
         if staffs.count == 0 {
             return nil
         }else {
-            return index % staffs.count
+            return abs(index % staffs.count)
 
         }
     }
