@@ -30,7 +30,7 @@ struct ProfileView: View {
              **/
         case .noStaff:
             VStack{
-                HeaderView(viewModel: profileViewModel, storeSelection: $storeSelection)
+                HeaderView(profileViewModel: profileViewModel, storeSelection: $storeSelection)
                 Spacer()
                 Text("Adding a staff first!!!")
                     .font(.largeTitle)
@@ -40,27 +40,27 @@ struct ProfileView: View {
             
         case .greenLight:
             VStack{
-                HeaderView(viewModel: profileViewModel, storeSelection: $storeSelection)
-                StaffsView(viewModel: profileViewModel)
+                HeaderView(profileViewModel: profileViewModel, storeSelection: $storeSelection)
+                StaffsView(profileViewModel: profileViewModel)
             }
         }
     }
 }
 
 struct HeaderView: View {
-    @ObservedObject var viewModel: ProfileViewModel
+    @ObservedObject var profileViewModel: ProfileViewModel
     @Binding  var storeSelection: Int
     @State private var showingAlert = false
     var body: some View {
         HStack{
             Picker(selection: $storeSelection, label: Text("Store")) {
-                ForEach(0..<viewModel.getAllStores().count, id:\.self) {
-                    Text(viewModel.getAllStores()[$0])
+                ForEach(0..<profileViewModel.getAllStores().count, id:\.self) {
+                    Text(profileViewModel.getAllStores()[$0])
                 }
             }
             .pickerStyle(.menu)
             .onChange(of: storeSelection) { newValue in
-                viewModel.updateCurrentStore(index: storeSelection)
+                profileViewModel.updateCurrentStore(index: storeSelection)
             }
             .padding(.leading, 10)
             Spacer()
@@ -80,7 +80,7 @@ struct HeaderView: View {
             .padding([.top, .bottom, .trailing], 10)
             .fullScreenCover(isPresented: $showingAlert) {
             } content: {
-                OneInputAlertView(showingAlert: $showingAlert, alertTitle: "Adding...", placeHolder: "Staff's name", action: viewModel.addStaff)
+                OneInputAlertView(showingAlert: $showingAlert, alertTitle: "Adding...", placeHolder: "Staff's name", action: profileViewModel.addStaff)
             }
             
         }
@@ -88,7 +88,7 @@ struct HeaderView: View {
 }
 
 struct StaffsView: View {
-    @ObservedObject var viewModel: ProfileViewModel
+    @ObservedObject var profileViewModel: ProfileViewModel
 
     @State private var currentStaff = 0
     
@@ -96,15 +96,15 @@ struct StaffsView: View {
         VStack{
             GeometryReader{g in
                 ZStack{
-                    staffCardView(profileViewModel: viewModel, staff: nil, bgColor: .black)
+                    staffCardView(profileViewModel: profileViewModel, staff: nil, bgColor: .black)
                         .position(x: g.size.width*0.6, y: g.size.height*0.7)
                         .offset(x: 40, y: -60)
                     
-                    staffCardView(profileViewModel: viewModel, staff: nil, bgColor: .gray)
+                    staffCardView(profileViewModel: profileViewModel, staff: nil, bgColor: .gray)
                         .position(x: g.size.width*0.6, y: g.size.height*0.7)
                         .offset(x: 20, y: -30)
                     
-                    staffCardView(profileViewModel: viewModel, staff: viewModel.getStaff(index: currentStaff), bgColor: .red)
+                    staffCardView(profileViewModel: profileViewModel, staff: profileViewModel.getStaff(index: currentStaff), bgColor: .red)
                         .position(x: g.size.width*0.6, y: g.size.height*0.7)
                         .gesture(DragGesture(minimumDistance: 3.0, coordinateSpace: .local).onEnded({ value in
                             switch GestureDirection.shared.getDragDirection(translation: value.translation) {
@@ -114,7 +114,7 @@ struct StaffsView: View {
                             case Direction.right:
                                 currentStaff -= 1
                             case Direction.up, Direction.down:
-                                viewModel.deleteStaff(index: currentStaff)
+                                profileViewModel.deleteStaff(index: currentStaff)
                             default:
                                 print("")
                             }
@@ -151,24 +151,40 @@ struct staffCardView: View {
                         Text("Weekly Hour Limits:")
                             .font(.body)
                             .padding(.leading, 5)
-                        TextField("Input Numbers Only", text: $weekHourLimits)
+                        TextField("", text: $weekHourLimits)
+                            .onAppear(perform: {
+                                weekHourLimits = String(staff.weeklyWorkHourLimits)
+                            })
                             .padding(.leading, 5)
                             .border(.black)
                             .onChange(of: weekHourLimits) { newValue in
+                                // numbers only
                                 if newValue.range(of: "^[0-9]+$", options: .regularExpression) == nil {
                                     weekHourLimits = ""
+                                }else {
+                                    profileViewModel.setWeeklyWorkingHourLimits(staff: staff, info: weekHourLimits)
                                 }
                             }
+                        Spacer()
                     }
                     .padding(.bottom, 10)
                     
-                    LabelBtnView(label: "Skills", plusBtnDisabled: false, hasClear: false, textFieldPlaceHolder: "Skill Name", alertType: .inputText, action: profileViewModel.addSkill)
-                    let jobs :[String] = ["roll1","roll1","roll1","roll1","roll1",
-                                          "roll1","roll1","roll1","roll1","roll1",
-                                          "roll1","roll1","roll1","roll1","roll1",
-                                          "roll1","roll1","roll1","roll1","roll1"]
-                    oneRowDisplayView(data: jobs)
-                        .padding(.bottom)
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+//                    LabelBtnView(label: "Skills", plusBtnDisabled: false, hasClear: false, textFieldPlaceHolder: "Skill Name", alertType: .inputText, action: profileViewModel.addSkill)
+//                    let jobs :[String] = ["roll1","roll1","roll1","roll1","roll1",
+//                                          "roll1","roll1","roll1","roll1","roll1",
+//                                          "roll1","roll1","roll1","roll1","roll1",
+//                                          "roll1","roll1","roll1","roll1","roll1"]
+//                    oneRowDisplayView(data: jobs)
+//                        .padding(.bottom)
                     
                     LabelBtnView(label: "Day Off", plusBtnDisabled: false, hasClear: false, textFieldPlaceHolder: "day off", alertType: .inputTextAndTimeSpan, action: profileViewModel.addDayOff)
                     let dayOffs = [(1,"20/6", nil),(2,"23/6", "12pm~12pm")]

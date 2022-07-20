@@ -125,8 +125,9 @@ class ProfileViewModel: ObservableObject {
         
     }
     
-    func addWeeklyWorkingHourLimits(info: String) {
-        
+    func setWeeklyWorkingHourLimits(staff: Staff, info: String) {
+        staff.weeklyWorkHourLimits = Int16(info)!
+        persistenceController.save()
     }
     
     func clear() {
