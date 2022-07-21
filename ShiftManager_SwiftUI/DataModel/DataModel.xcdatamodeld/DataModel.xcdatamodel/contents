@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20086" systemVersion="21F79" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="AvailableOn" representedClassName="AvailableOn" syncable="YES" codeGenerationType="class">
+        <attribute name="uuid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <relationship name="shift" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Shift" inverseName="availableStaffs" inverseEntity="Shift"/>
+        <relationship name="staff" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Staff" inverseName="availableOn" inverseEntity="Staff"/>
+    </entity>
+    <entity name="CapableOf" representedClassName="CapableOf" syncable="YES" codeGenerationType="class">
+        <attribute name="uuid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <relationship name="skill" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Job" inverseName="availableStaffs" inverseEntity="Job"/>
+        <relationship name="staff" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Staff" inverseName="capableOf" inverseEntity="Staff"/>
+    </entity>
     <entity name="DayOff" representedClassName="DayOff" syncable="YES" codeGenerationType="class">
         <attribute name="end" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="start" attributeType="Date" usesScalarValueType="NO"/>
@@ -11,7 +21,7 @@
         <attribute name="priority" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="uuid" attributeType="UUID" usesScalarValueType="NO"/>
         <relationship name="activeJob" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WorkDay" inverseName="position" inverseEntity="WorkDay"/>
-        <relationship name="availableStaffs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Staff" inverseName="skills" inverseEntity="Staff"/>
+        <relationship name="availableStaffs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CapableOf" inverseName="skill" inverseEntity="CapableOf"/>
         <relationship name="belongTo" maxCount="1" deletionRule="Nullify" destinationEntity="Store" inverseName="jobs" inverseEntity="Store"/>
     </entity>
     <entity name="Shift" representedClassName="Shift" syncable="YES" codeGenerationType="class">
@@ -20,6 +30,7 @@
         <attribute name="name" attributeType="String"/>
         <attribute name="start" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="uuid" attributeType="UUID" usesScalarValueType="NO"/>
+        <relationship name="availableStaffs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="AvailableOn" inverseName="shift" inverseEntity="AvailableOn"/>
         <relationship name="belongTo" maxCount="1" deletionRule="Nullify" destinationEntity="Store" inverseName="shifts" inverseEntity="Store"/>
         <relationship name="on" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WorkDay" inverseName="timeSlot" inverseEntity="WorkDay"/>
     </entity>
@@ -27,9 +38,10 @@
         <attribute name="name" attributeType="String"/>
         <attribute name="uuid" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="weeklyWorkHourLimits" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="availableOn" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AvailableOn" inverseName="staff" inverseEntity="AvailableOn"/>
+        <relationship name="capableOf" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CapableOf" inverseName="staff" inverseEntity="CapableOf"/>
         <relationship name="dayOff" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="DayOff" inverseName="belongTo" inverseEntity="DayOff"/>
         <relationship name="employedBy" maxCount="1" deletionRule="Nullify" destinationEntity="Store" inverseName="employees" inverseEntity="Store"/>
-        <relationship name="skills" toMany="YES" deletionRule="Nullify" destinationEntity="Job" inverseName="availableStaffs" inverseEntity="Job"/>
         <relationship name="workOn" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="WorkDay" inverseName="assignTo" inverseEntity="WorkDay"/>
     </entity>
     <entity name="Store" representedClassName="Store" syncable="YES" codeGenerationType="class">
@@ -47,11 +59,13 @@
         <relationship name="timeSlot" maxCount="1" deletionRule="Nullify" destinationEntity="Shift" inverseName="on" inverseEntity="Shift"/>
     </entity>
     <elements>
-        <element name="DayOff" positionX="-317.5546875" positionY="-31.96875" width="128" height="89"/>
-        <element name="Job" positionX="-416.50390625" positionY="-187.9453125" width="128" height="119"/>
-        <element name="Shift" positionX="-219.5859375" positionY="-185.02734375" width="116.65234375" height="134"/>
-        <element name="Staff" positionX="-317.76171875" positionY="-108.6953125" width="128" height="134"/>
-        <element name="Store" positionX="-317.20703125" positionY="-248" width="128" height="104"/>
-        <element name="WorkDay" positionX="-324" positionY="-108" width="128" height="104"/>
+        <element name="DayOff" positionX="-107.9453125" positionY="194.13671875" width="128" height="89"/>
+        <element name="Job" positionX="-551.890625" positionY="-273.66796875" width="128" height="133"/>
+        <element name="Shift" positionX="-84.23828125" positionY="-239.86328125" width="116.65234375" height="163"/>
+        <element name="Staff" positionX="-235.265625" positionY="1.0390625" width="128" height="163"/>
+        <element name="Store" positionX="-333.44921875" positionY="-367.7578125" width="128" height="104"/>
+        <element name="WorkDay" positionX="-545.828125" positionY="-45.484375" width="128" height="104"/>
+        <element name="CapableOf" positionX="-324" positionY="-36" width="128" height="88"/>
+        <element name="AvailableOn" positionX="-333" positionY="-198" width="128" height="74"/>
     </elements>
 </model>

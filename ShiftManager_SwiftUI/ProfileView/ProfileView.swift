@@ -96,15 +96,15 @@ struct StaffsView: View {
         VStack{
             GeometryReader{g in
                 ZStack{
-                    staffCardView(profileViewModel: profileViewModel, staff: nil, bgColor: .black)
+                    StaffCardView(profileViewModel: profileViewModel, staff: nil, bgColor: .black)
                         .position(x: g.size.width*0.6, y: g.size.height*0.7)
                         .offset(x: 40, y: -60)
                     
-                    staffCardView(profileViewModel: profileViewModel, staff: nil, bgColor: .gray)
+                    StaffCardView(profileViewModel: profileViewModel, staff: nil, bgColor: .gray)
                         .position(x: g.size.width*0.6, y: g.size.height*0.7)
                         .offset(x: 20, y: -30)
                     
-                    staffCardView(profileViewModel: profileViewModel, staff: profileViewModel.getStaff(index: currentStaff), bgColor: .red)
+                    StaffCardView(profileViewModel: profileViewModel, staff: profileViewModel.getStaff(index: currentStaff), bgColor: .red)
                         .position(x: g.size.width*0.6, y: g.size.height*0.7)
                         .gesture(DragGesture(minimumDistance: 3.0, coordinateSpace: .local).onEnded({ value in
                             switch GestureDirection.shared.getDragDirection(translation: value.translation) {
@@ -126,12 +126,13 @@ struct StaffsView: View {
 }
 
 
-struct staffCardView: View {
+struct StaffCardView: View {
     @ObservedObject var profileViewModel: ProfileViewModel
     
     var staff: Staff?
     var bgColor: Color
     @State var weekHourLimits: String = ""
+    @State var isSkillEditBtnPressed: Bool = false
     
     var body: some View {
         
@@ -170,21 +171,21 @@ struct staffCardView: View {
                     .padding(.bottom, 10)
                     
                     
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-//                    LabelBtnView(label: "Skills", plusBtnDisabled: false, hasClear: false, textFieldPlaceHolder: "Skill Name", alertType: .inputText, action: profileViewModel.addSkill)
-//                    let jobs :[String] = ["roll1","roll1","roll1","roll1","roll1",
-//                                          "roll1","roll1","roll1","roll1","roll1",
-//                                          "roll1","roll1","roll1","roll1","roll1",
-//                                          "roll1","roll1","roll1","roll1","roll1"]
-//                    oneRowDisplayView(data: jobs)
-//                        .padding(.bottom)
+                    VStack{
+                        HStack{
+                            Text("Skills")
+                            Button {
+                                isSkillEditBtnPressed.toggle()
+                                
+                            } label: {
+                                Image(systemName: isSkillEditBtnPressed ? "square.and.arrow.down.on.square" : "pencil" )
+                            }
+
+                        }
+                        MultipleSelectionView(options: profileViewModel.getSkillsList(staff: staff), editable: $isSkillEditBtnPressed)
+                            .frame(height: 50)
+                    }
+                    .padding()
                     
                     LabelBtnView(label: "Day Off", plusBtnDisabled: false, hasClear: false, textFieldPlaceHolder: "day off", alertType: .inputTextAndTimeSpan, action: profileViewModel.addDayOff)
                     let dayOffs = [(1,"20/6", nil),(2,"23/6", "12pm~12pm")]
@@ -205,14 +206,34 @@ struct staffCardView: View {
     }
 }
 
-//struct multipleSelectionView: View {
-//    var options: [String]
-//
-//    var body: some View {
-//
-//    }
-//}
-
+struct MultipleSelectionView: View {
+    @State var options: [(UUID, SkillType, String, Bool)]
+    @Binding var editable: Bool
+    
+    private let adaptiveRows = [
+        GridItem(.adaptive(minimum: 20))
+    ]
+    
+    var body: some View {
+        ScrollView(.horizontal) {
+            LazyHGrid(rows: adaptiveRows, spacing: 10) {
+                
+                ForEach($options, id: \(UUID, SkillType, String, Bool).0) { $option in
+                    Button {
+                        option.3 = !option.3
+                    } label: {
+                        HStack{
+                            Image(systemName: option.3 ? "checkmark.square" : "square")
+                            Text(option.2)
+                        }
+                    }
+                    .disabled(!editable)
+                    .padding()
+                }
+            }
+        }
+    }
+}
 
 struct dayOffView: View {
     var dayOffs: [(id: Int, date: String, time: String?)]
@@ -239,8 +260,7 @@ struct dayOffView: View {
 }
 //
 //struct ProfileView_Previews: PreviewProvider {
-//    @State var tab = 0
 //    static var previews: some View {
-//        ProfileView(tabSelection: $tab)
+//        multipleSelectionView(options: ["roll", "roll1", "box1","roll2", "box2", "nigiri"]).frame(width: .infinity, height: 50)
 //    }
 //}

@@ -7,12 +7,7 @@
 
 import SwiftUI
 
-enum AlertType {
-    case showText
-    case inputText
-    case inputTextAndTimeSpan
-    case inputTextAndSelection
-}
+
 
 struct ShowMsgAlertView: View {
     @Binding var showingAlert: Bool

@@ -14,6 +14,7 @@
 		7B0513EF2876FEB600BCC0E1 /* CustumAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B0513EE2876FEB600BCC0E1 /* CustumAlert.swift */; };
 		7B0513F328812B4400BCC0E1 /* TimeFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B0513F228812B4400BCC0E1 /* TimeFormatter.swift */; };
 		7BAEF33E2886CBFC00313991 /* GestureDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BAEF33D2886CBFC00313991 /* GestureDirection.swift */; };
+		7BAEF3402888ECB200313991 /* ExtraInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BAEF33F2888ECB200313991 /* ExtraInfo.swift */; };
 		7BE2EC13286D10E40008BB0F /* ShiftManager_SwiftUIApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BE2EC12286D10E40008BB0F /* ShiftManager_SwiftUIApp.swift */; };
 		7BE2EC15286D10E40008BB0F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BE2EC14286D10E40008BB0F /* ContentView.swift */; };
 		7BE2EC17286D10E50008BB0F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7BE2EC16286D10E50008BB0F /* Assets.xcassets */; };
@@ -31,6 +32,7 @@
 		7B0513EE2876FEB600BCC0E1 /* CustumAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustumAlert.swift; sourceTree = "<group>"; };
 		7B0513F228812B4400BCC0E1 /* TimeFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeFormatter.swift; sourceTree = "<group>"; };
 		7BAEF33D2886CBFC00313991 /* GestureDirection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GestureDirection.swift; sourceTree = "<group>"; };
+		7BAEF33F2888ECB200313991 /* ExtraInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtraInfo.swift; sourceTree = "<group>"; };
 		7BE2EC0F286D10E40008BB0F /* ShiftManager_SwiftUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ShiftManager_SwiftUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7BE2EC12286D10E40008BB0F /* ShiftManager_SwiftUIApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShiftManager_SwiftUIApp.swift; sourceTree = "<group>"; };
 		7BE2EC14286D10E40008BB0F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -102,6 +104,7 @@
 				7B0513EE2876FEB600BCC0E1 /* CustumAlert.swift */,
 				7B0513F228812B4400BCC0E1 /* TimeFormatter.swift */,
 				7BAEF33D2886CBFC00313991 /* GestureDirection.swift */,
+				7BAEF33F2888ECB200313991 /* ExtraInfo.swift */,
 			);
 			path = Helper;
 			sourceTree = "<group>";
@@ -215,6 +218,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7BAEF3402888ECB200313991 /* ExtraInfo.swift in Sources */,
 				7BE2EC23286D19040008BB0F /* ProfileView.swift in Sources */,
 				7B0513E5287682E600BCC0E1 /* PersistenceController.swift in Sources */,
 				7BE2EC27286D19560008BB0F /* ShiftManageView.swift in Sources */,
