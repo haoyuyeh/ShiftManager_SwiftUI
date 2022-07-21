@@ -101,7 +101,6 @@ struct LabelBtnView: View {
     var alertType: AlertType
     var action: (String) -> Void
     
-//    @State private var textEntered = ""
     @State private var showingAlert = false
     
 
@@ -116,7 +115,6 @@ struct LabelBtnView: View {
             Button(action: {
                 // show alert to get input from user, then do whatever you want for the plus button
                 self.showingAlert.toggle()
-//                self.textEntered = ""
             }){
                 Image(systemName: "plus")
                     .padding(.trailing, 8)

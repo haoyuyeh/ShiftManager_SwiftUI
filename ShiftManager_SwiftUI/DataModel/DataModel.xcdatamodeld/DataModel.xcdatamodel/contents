@@ -38,7 +38,7 @@
         <attribute name="name" attributeType="String"/>
         <attribute name="uuid" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="weeklyWorkHourLimits" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <relationship name="availableOn" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AvailableOn" inverseName="staff" inverseEntity="AvailableOn"/>
+        <relationship name="availableOn" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="AvailableOn" inverseName="staff" inverseEntity="AvailableOn"/>
         <relationship name="capableOf" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CapableOf" inverseName="staff" inverseEntity="CapableOf"/>
         <relationship name="dayOff" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="DayOff" inverseName="belongTo" inverseEntity="DayOff"/>
         <relationship name="employedBy" maxCount="1" deletionRule="Nullify" destinationEntity="Store" inverseName="employees" inverseEntity="Store"/>
@@ -59,13 +59,13 @@
         <relationship name="timeSlot" maxCount="1" deletionRule="Nullify" destinationEntity="Shift" inverseName="on" inverseEntity="Shift"/>
     </entity>
     <elements>
+        <element name="AvailableOn" positionX="-333" positionY="-198" width="128" height="74"/>
+        <element name="CapableOf" positionX="-324" positionY="-36" width="128" height="88"/>
         <element name="DayOff" positionX="-107.9453125" positionY="194.13671875" width="128" height="89"/>
         <element name="Job" positionX="-551.890625" positionY="-273.66796875" width="128" height="133"/>
         <element name="Shift" positionX="-84.23828125" positionY="-239.86328125" width="116.65234375" height="163"/>
-        <element name="Staff" positionX="-235.265625" positionY="1.0390625" width="128" height="163"/>
+        <element name="Staff" positionX="-235.265625" positionY="1.0390625" width="128" height="149"/>
         <element name="Store" positionX="-333.44921875" positionY="-367.7578125" width="128" height="104"/>
         <element name="WorkDay" positionX="-545.828125" positionY="-45.484375" width="128" height="104"/>
-        <element name="CapableOf" positionX="-324" positionY="-36" width="128" height="88"/>
-        <element name="AvailableOn" positionX="-333" positionY="-198" width="128" height="74"/>
     </elements>
 </model>

@@ -46,7 +46,13 @@ struct ProfileView: View {
         }
     }
 }
-
+///***********************************************************
+///
+/// this is a header view combine with two buttons.
+/// left button can change the current store.
+/// right button can add new staff to the current store
+///
+///************************************************************
 struct HeaderView: View {
     @ObservedObject var profileViewModel: ProfileViewModel
     @Binding  var storeSelection: Int
@@ -86,7 +92,17 @@ struct HeaderView: View {
         }
     }
 }
-
+///***********************************************************
+///
+/// this is a view presenting all staffs as a card deck which only shows one staff
+/// on the top card.
+///
+/// it can use drag gestures to operate the card deck.
+/// drag up or down will delete the current staff
+/// drag left will show the next staff
+/// drag right will show the previous staff
+///
+///************************************************************
 struct StaffsView: View {
     @ObservedObject var profileViewModel: ProfileViewModel
 
@@ -96,17 +112,17 @@ struct StaffsView: View {
         VStack{
             GeometryReader{g in
                 ZStack{
-                    StaffCardView(profileViewModel: profileViewModel, staff: nil, bgColor: .black)
+                    StaffCardView(profileViewModel: profileViewModel, staff: nil, bgColor: .mint)
                         .position(x: g.size.width*0.6, y: g.size.height*0.7)
                         .offset(x: 40, y: -60)
                     
-                    StaffCardView(profileViewModel: profileViewModel, staff: nil, bgColor: .gray)
+                    StaffCardView(profileViewModel: profileViewModel, staff: nil, bgColor: .orange)
                         .position(x: g.size.width*0.6, y: g.size.height*0.7)
                         .offset(x: 20, y: -30)
                     
-                    StaffCardView(profileViewModel: profileViewModel, staff: profileViewModel.getStaff(index: currentStaff), bgColor: .red)
+                    StaffCardView(profileViewModel: profileViewModel, staff: profileViewModel.getStaff(index: currentStaff), bgColor: .brown)
                         .position(x: g.size.width*0.6, y: g.size.height*0.7)
-                        .gesture(DragGesture(minimumDistance: 3.0, coordinateSpace: .local).onEnded({ value in
+                        .gesture(DragGesture(minimumDistance: 200.0, coordinateSpace: .local).onEnded({ value in
                             switch GestureDirection.shared.getDragDirection(translation: value.translation) {
                                 
                             case Direction.left:
@@ -125,7 +141,11 @@ struct StaffsView: View {
     }
 }
 
-
+///***********************************************************
+///
+/// this is a view showing the details of a staff
+///
+///************************************************************
 struct StaffCardView: View {
     @ObservedObject var profileViewModel: ProfileViewModel
     
@@ -153,11 +173,11 @@ struct StaffCardView: View {
                             .font(.body)
                             .padding(.leading, 5)
                         TextField("", text: $weekHourLimits)
+                            .padding(.leading, 5)
+                            .border(.black)
                             .onAppear(perform: {
                                 weekHourLimits = String(staff.weeklyWorkHourLimits)
                             })
-                            .padding(.leading, 5)
-                            .border(.black)
                             .onChange(of: weekHourLimits) { newValue in
                                 // numbers only
                                 if newValue.range(of: "^[0-9]+$", options: .regularExpression) == nil {
@@ -168,12 +188,12 @@ struct StaffCardView: View {
                             }
                         Spacer()
                     }
-                    .padding(.bottom, 10)
                     
                     
                     VStack{
                         HStack{
                             Text("Skills")
+                                .font(.title)
                             Button {
                                 isSkillEditBtnPressed.toggle()
                                 
@@ -182,7 +202,7 @@ struct StaffCardView: View {
                             }
 
                         }
-                        MultipleSelectionView(options: profileViewModel.getSkillsList(staff: staff), editable: $isSkillEditBtnPressed)
+                        MultipleSelectionView(options: profileViewModel.getSkillsList(staff: staff), editable: $isSkillEditBtnPressed, currentStaff: staff.uuid!, action: profileViewModel.updateSkillsList)
                             .frame(height: 50)
                     }
                     .padding()
@@ -205,10 +225,18 @@ struct StaffCardView: View {
         
     }
 }
-
+///***********************************************************
+///
+/// this view will show some options based on the passing info, which allows multiple
+/// selections
+/// 
+///************************************************************
 struct MultipleSelectionView: View {
     @State var options: [(UUID, SkillType, String, Bool)]
     @Binding var editable: Bool
+    
+    var currentStaff: UUID
+    var action: (UUID, (UUID, SkillType, String, Bool)) -> Void
     
     private let adaptiveRows = [
         GridItem(.adaptive(minimum: 20))
@@ -221,6 +249,7 @@ struct MultipleSelectionView: View {
                 ForEach($options, id: \(UUID, SkillType, String, Bool).0) { $option in
                     Button {
                         option.3 = !option.3
+                        action(currentStaff, option)
                     } label: {
                         HStack{
                             Image(systemName: option.3 ? "checkmark.square" : "square")

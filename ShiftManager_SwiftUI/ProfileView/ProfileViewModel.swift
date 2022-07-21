@@ -115,43 +115,68 @@ class ProfileViewModel: ObservableObject {
     
     func getSkillsList(staff: Staff) -> [(UUID,SkillType, String, Bool)] {
         var skillsList:[(id: UUID, category: SkillType, name: String,hasTicked: Bool)] = []
-        let staffSkills = staff.skills?.allObjects as! [Job]
-        let staffCapableShifts = staff.capableOf?.allObjects as! [Shift]
+        let staffSkills = staff.capableOf?.allObjects as! [CapableOf]
+        let staffCapableShifts = staff.availableOn?.allObjects as! [AvailableOn]
         
         if currentStore != nil {
             for job in jobs {
                 
                 skillsList.append((job.uuid!, .job, job.name!, staffSkills.contains { skill in
-                    skill.name == job.name
+                    skill.skill?.name == job.name
                 }))
             }
             for shift in shifts {
                 skillsList.append((shift.uuid!, .shift, shift.name!, staffCapableShifts.contains { skill in
-                    skill.name == shift.name
+                    skill.shift?.name == shift.name
                 }))
             }
         }
-        return skillsList
+        return skillsList.sorted { return $0.name < $1.name
+        }
     }
     
     func updateSkillsList(staff: UUID, skill: (UUID, SkillType, String, Bool)) {
-        var currentStaff = staffs.filter { s in
+        let currentStaff = staffs.filter { s in
             return s.uuid?.uuidString == staff.uuidString
         }
+        let staffSkills = currentStaff[0].capableOf?.allObjects as! [CapableOf]
+        let staffCapableShifts = currentStaff[0].availableOn?.allObjects as! [AvailableOn]
+        
         switch skill.1 {
         case .job:
             let job = jobs.filter { j in
                return j.uuid?.uuidString == skill.0.uuidString
             }
-            let jobIndex = jobs.firstIndex(of: job[0])
             if skill.3 {
-                currentStaff[0].skills?.adding(job)
+                let capableOf = CapableOf(context: managedObjectContext)
+                capableOf.uuid = UUID()
+                capableOf.staff = currentStaff[0]
+                capableOf.skill = job[0]
+                persistenceController.save()
             }else {
-                currentStaff[0].skills?. .remove(at: jobIndex)
+                let capableOf = staffSkills.filter { c in
+                    c.skill?.name == job[0].name
+                }
+                persistenceController.delete(capableOf[0])
+                persistenceController.save()
             }
-            persistenceController.save()
         case .shift:
-            
+            let shift = shifts.filter { s in
+               return s.uuid?.uuidString == skill.0.uuidString
+            }
+            if skill.3 {
+                let availableOn = AvailableOn(context: managedObjectContext)
+                availableOn.uuid = UUID()
+                availableOn.staff = currentStaff[0]
+                availableOn.shift = shift[0]
+                persistenceController.save()
+            }else {
+                let availableOn = staffCapableShifts.filter { c in
+                    c.shift?.name == shift[0].name
+                }
+                persistenceController.delete(availableOn[0])
+                persistenceController.save()
+            }
         }
     }
     
